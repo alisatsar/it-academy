@@ -1,0 +1,14 @@
+cd /home/alisatsar/Projects
+mkdir my_hello_world
+cd my_hello_world
+mkdir hello01
+mkdir hello01_build
+cd hello01
+nano main.cpp
+g++ main.cpp
+nano CMakeLists.txt
+cd ../hello01_build
+cmake -G "Unix Makefiles" ../hello01
+ls
+make -f Makefile
+./main
