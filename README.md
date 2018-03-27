@@ -39,5 +39,5 @@
   выбираем наш main (испоняемый файл) Apply Run
 устанавливаем clang-format для редактирования текста
   sudo apt-get install clang-format
-  clang-format -style=Chromium -dump-config > .clang-form
-  этот файл должен лежать в нашем скопированном репозитории
+  clang-format -style=Chromium -dump-config > .clang-format
+  этот файл должен лежать в нашем клонированном репозитории
