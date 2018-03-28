@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.9)
+project(main)
+add_executable(main main.cxx)
+include_directories(../hello_lib)
+target_link_libraries(main greetings)
