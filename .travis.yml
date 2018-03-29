@@ -1,7 +1,8 @@
-language: cpp
-sudo: required
 dist: trusty
-compiler:
-- gcc
-os: linux
+sudo: false
+language: cpp
+
+script:
+  - cmake .
+  - cmake --build . -- -j2
 
