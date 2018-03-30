@@ -1,24 +1,10 @@
-dist: trusty
-sudo: false
 language: cpp
 
-install: make get-deps
+compiler:
+  - clang
+  - gcc
 
-./configure && make && make test
-
-addons:
-  apt:
-    sources: 
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-5
-      
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
-      
-
+script:
+  - mkdir build
+  - cd build
+  - cmake .. && make
