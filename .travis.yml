@@ -16,7 +16,3 @@ addons:
     packages:
       - cmake-data
       - cmake
-
-script:
-    - CXX=/usr/bin/g++-5 CC=/usr/bin/gcc-5 cmake .
-    - cmake --build . -- -j2
