@@ -2,6 +2,10 @@ dist: trusty
 sudo: false
 language: cpp
 
+install: make get-deps
+
+./configure && make && make test
+
 addons:
   apt:
     sources: 
@@ -17,4 +21,4 @@ addons:
       - cmake-data
       - cmake
       
-./configure && make && make test
+
