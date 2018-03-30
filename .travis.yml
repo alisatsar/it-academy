@@ -11,7 +11,7 @@ script:
   - cd build
   - cmake -G "Unix Makefiles" ..
   - make Makefile
-  - ./main
+  - ls -a
   
 matrix:
   include:
