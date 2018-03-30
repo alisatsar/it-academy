@@ -8,6 +8,14 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-5
+      
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake-data
+      - cmake
 
 script:
     - CXX=/usr/bin/g++-5 CC=/usr/bin/gcc-5 cmake .
