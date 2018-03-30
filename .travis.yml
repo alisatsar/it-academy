@@ -16,3 +16,5 @@ addons:
     packages:
       - cmake-data
       - cmake
+      
+./configure && make && make test
