@@ -9,7 +9,8 @@ script:
   - cd 01-1-hello-world
   - mkdir build
   - cd build
-  - cmake .. && make
+  - cmake -G "Unix Makefiles" ..
+  - make Makefile
   
 matrix:
   include:
