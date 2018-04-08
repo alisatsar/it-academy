@@ -1,11 +1,5 @@
-
-<a id="github-button" class="btn btn-block btn-social btn-github">
-    <i class="fa fa-github"></i> Sign in with GitHub
-</a>
+[BUILD HISTORY](https://travis-ci.org/alisatsar/it-academy/builds)
 # it-academy
-<form action="https://travis-ci.org/alisatsar/it-academy/builds">
-    <input type="submit" value="BUILD HISTORY" />
-</form>
 <b>устанавливаем gcc:</b><br>
 <ul>
  <li>gcc --version (проверяем наличие gcc)</li>
