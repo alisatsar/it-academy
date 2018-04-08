@@ -1,11 +1,13 @@
-cmake --version
-скачать исходники SDL2.tar.gz
-распоковать в папку game-dev
-mkdir SDL2build
-cd SDL2build
-cmake gui
-cmake ../SDL2
-
+<b>УСТАНОВКА SDL2</b><br>
+<ul>
+<li>cmake --version</li>
+<li>скачать исходники SDL2.tar.gz</li>
+<li>распоковать в папку game-dev</li>
+<li>mkdir SDL2build</li>
+<li>cd SDL2build</li>
+<li>cmake gui</li>
+<li>cmake ../SDL2</li>
+</ul>
 sudo apt-get install cmake-gui
 в поле Where is the source code: выбираем наш распакованный SDL2
 в поле Where to build the binaries: выбираем папку, которую создали SDL2build
