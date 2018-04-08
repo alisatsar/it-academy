@@ -1,32 +1,32 @@
 # it-academy
 устанавливаем gcc:<br>
-  gcc --version (проверяем наличие gcc)
-  sudo apt-get install gcc
-устанавливаем make:
-  make --version 
-  sudo apt-get install make
-устанавливаем cmake:
-  cmake --version
-  sudo apt-get install cmake
-устанавливаем eclipse IDE for c/c++  Developers
-  скачается файл с расширением tar.gz в папку Downloads
-  mkdir game_dev (создадим папку game_dev на одном уровне с Downloads, куда положим распакованный eclipse)
-  cd Downloads (перешли в папку Downloads где лежит eclipse...tar.gz)
-  tar -xvf eclipse...tar.gz -C ../game_dev (распаковываем eclipse в папку game_dev)
-  rm -rf eclipse...tar.gz (Удаляем файл tar.gz)
-  cd ../game_dev (переходим в папку game_dev)
-  ls (проверяем наличие eclipse)
-  открываем eclipse из папки
-  качаем плагин help->Eclipse Marketplace вводим в строку поиска сppstyle, подтверждаем, Install anyway
-  также устанавливаем плагины cppcheck, cmake editor, cmake4eclipse
-Важно
-  file-> New->C/C++ Project ->C++ Managed BUild
-  снимаем галочку с Use default location
-  выбираем уже существующий проект(папку с сpp и CMakeLists.txt)
-  Называем проект также как папку
-  Project type->executable->Empty Project->linux GCC
-  нажимаем кнопку next
-  В окне Select configurations:
+  gcc --version (проверяем наличие gcc)<br>
+  sudo apt-get install gcc<br>
+устанавливаем make:<br>
+  make --version <br>
+  sudo apt-get install make<br>
+устанавливаем cmake:<br>
+  cmake --version<br>
+  sudo apt-get install cmake<br>
+устанавливаем eclipse IDE for c/c++  Developers<br>
+  скачается файл с расширением tar.gz в папку Downloads<br>
+  mkdir game_dev (создадим папку game_dev на одном уровне с Downloads, куда положим распакованный eclipse)<br>
+  cd Downloads (перешли в папку Downloads где лежит eclipse...tar.gz)<br>
+  tar -xvf eclipse...tar.gz -C ../game_dev (распаковываем eclipse в папку game_dev)<br>
+  rm -rf eclipse...tar.gz (Удаляем файл tar.gz)<br>
+  cd ../game_dev (переходим в папку game_dev)<br>
+  ls (проверяем наличие eclipse)<br>
+  открываем eclipse из папки<br>
+  качаем плагин help->Eclipse Marketplace вводим в строку поиска сppstyle, подтверждаем, Install anyway<br>
+  также устанавливаем плагины cppcheck, cmake editor, cmake4eclipse<br>
+Важно<br>
+  file-> New->C/C++ Project ->C++ Managed BUild<br>
+  снимаем галочку с Use default location<br>
+  выбираем уже существующий проект(папку с сpp и CMakeLists.txt)<br>
+  Называем проект также как папку<br>
+  Project type->executable->Empty Project->linux GCC<br>
+  нажимаем кнопку next<br>
+  В окне Select configurations:<br>
   снимаем галочку с release
   нажимаем кнопку Advanced settings
   В появившемся окне:
