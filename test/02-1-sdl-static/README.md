@@ -43,18 +43,20 @@ sudo apt search SDL2 найти пакеты с таким названием
 sudo apt -remove sdl2-dev
 но нужно удалить пакет без зависимостей
 
-для правильной сборки приложения с библиотекой
-надо сначала слинковать библиотеку, потом заинстались
-потом скомпилировать с приложением
+<b>для правильной сборки приложения с библиотекой<br>
+надо сначала слинковать библиотеку, потом заинстались<br>
+потом скомпилировать с приложением</b><br>
 
-запускаем eclipse
-создаем новый проект
-после нажатия advanced, устнавливаем еще одну опцию
-c/c++ General -> Preprocessor include Paths, Macros etc.
-находим СMAKE_EXPORT_COMPILE_COMMANDS Parser Ставим галочку и перемещаем вверх
-для того, чтобы сработало первее cmake parser
-в CDT GCC Built-in Compiler Settings дописываем -std=c++17
-Нажимаем apply и apply and close. нажимаем finish
+<b>запускаем eclipse</b><br>
+<ul>
+<li>создаем новый проект</li>
+<li>после нажатия advanced, устнавливаем еще одну опцию</li>
+<li>c/c++ General -> Preprocessor include Paths, Macros etc.</li>
+<li>находим СMAKE_EXPORT_COMPILE_COMMANDS Parser Ставим галочку и перемещаем вверх</li>
+<li>для того, чтобы сработало первее cmake parser</li>
+<li>в CDT GCC Built-in Compiler Settings дописываем -std=c++17</li>
+<li>Нажимаем apply и apply and close. нажимаем finish</li>
+</ul>
 
 подключение статической библиотеки<br>
 создаем файл main.cxx описан выше<br>
