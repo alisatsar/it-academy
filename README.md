@@ -49,5 +49,5 @@
   этот файл должен лежать в нашем клонированном репозитории<br><br><br>
 
 
- <a href="https://github.com/alisatsar/it-academy/tree/master/test/02-1-sdl-static"><b>ссылка на установку библиотеки SDL2</b></a>
+ <a href="https://github.com/alisatsar/it-academy/tree/master/test/02-1-sdl-static"><b>ссылка на установку библиотеки SDL2</b></a><br>
  <a href="https://infobsd.ru/sites/default/files/git-cheatsheet-ru.pdf"><b>команды Git</b></a>
