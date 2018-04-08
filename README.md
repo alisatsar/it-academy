@@ -1,4 +1,6 @@
-<button href="https://travis-ci.org/alisatsar/it-academy/builds">BUILD HISTORY</button>
+<form action="https://travis-ci.org/alisatsar/it-academy/builds">
+    <input type="submit" value="BUILD HISTORY" />
+</form>
 
 # it-academy
 <b>устанавливаем gcc:</b><br>
