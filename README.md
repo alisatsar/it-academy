@@ -1,8 +1,9 @@
+
+
+# it-academy
 <form action="https://travis-ci.org/alisatsar/it-academy/builds">
     <input type="submit" value="BUILD HISTORY" />
 </form>
-
-# it-academy
 <b>устанавливаем gcc:</b><br>
 <ul>
  <li>gcc --version (проверяем наличие gcc)</li>
