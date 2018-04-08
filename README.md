@@ -1,3 +1,5 @@
+<button href="https://travis-ci.org/alisatsar/it-academy/builds">BUILD HISTORY</button>
+
 # it-academy
 <b>устанавливаем gcc:</b><br>
 <ul>
