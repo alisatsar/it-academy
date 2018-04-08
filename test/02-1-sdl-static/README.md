@@ -8,22 +8,30 @@
 <li>cmake gui</li>
 <li>cmake ../SDL2</li>
 </ul>
-sudo apt-get install cmake-gui
-в поле Where is the source code: выбираем наш распакованный SDL2
-в поле Where to build the binaries: выбираем папку, которую создали SDL2build
-нажимем Configure
-В открывшемся окне Unix Makefiles, Use default native compiles, Finish
-ставим галочку Advanced
-ищем CMAKE_BUILD_TYPE и пишем ему значение debug
-нажимаем configure, потом Generate
-Закрываем cmake-gui
-cd game_dev/SDL2build/
-make -j4 
-sudo make install установить библиотеку
-должно быть прописано: Install configuration "debug"
-в линуксе он установить там, куда прописать переменную CMAKE_INSTALL_PREFIX
-по умолчанию usr/local/lib/ (usr/local - это где мы сами компилируем и сами собираем)
-В папке bin - лежате системные программы
+<b>настройка через cmake-gui</b><br>
+<ul>
+<li>sudo apt-get install cmake-gui</li>
+<li>cmake-gui</li>
+<li>в поле Where is the source code: выбираем наш распакованный SDL2</li>
+<li>в поле Where to build the binaries: выбираем папку, которую создали SDL2build</li>
+<li>нажимем Configure</li>
+<li>В открывшемся окне Unix Makefiles, Use default native compiles, Finish</li>
+<li>ставим галочку Advanced</li>
+<li>ищем CMAKE_BUILD_TYPE и пишем ему значение debug</li>
+<li>нажимаем configure, потом Generate</li>
+<li>Закрываем cmake-gui</li>
+</ul>
+
+<b>Далее установка</b><br>
+<ul>
+<li>cd game_dev/SDL2build/</li>
+<li>make -j4 </li>
+<li>sudo make install установить библиотеку
+(должно быть прописано: Install configuration "debug")</li>
+<li>в линуксе он установить там, куда прописать переменную CMAKE_INSTALL_PREFIX</li>
+<li>по умолчанию usr/local/lib/ (usr/local - это где мы сами компилируем и сами собираем)</li>
+<li>В папке bin - лежате системные программы</li>
+</ul>
 
 sdl2-config --static-libs (флаги для платформы, чтобы все слинковалось)
 sdl2-confib -libs (флаги для линковки dynamic)
