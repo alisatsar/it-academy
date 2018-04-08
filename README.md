@@ -1,5 +1,6 @@
 
-
+<a class="btn" href="">Link</a>
+<button class="btn" type="submit">Button</button>
 # it-academy
 <form action="https://travis-ci.org/alisatsar/it-academy/builds">
     <input type="submit" value="BUILD HISTORY" />
