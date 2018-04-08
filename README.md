@@ -1,6 +1,7 @@
 
-<a class="btn" href="">Link</a>
-<button class="btn" type="submit">Button</button>
+<a id="github-button" class="btn btn-block btn-social btn-github">
+    <i class="fa fa-github"></i> Sign in with GitHub
+</a>
 # it-academy
 <form action="https://travis-ci.org/alisatsar/it-academy/builds">
     <input type="submit" value="BUILD HISTORY" />
