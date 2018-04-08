@@ -1,5 +1,5 @@
 # it-academy
-устанавливаем gcc:
+устанавливаем gcc:<br>
   gcc --version (проверяем наличие gcc)
   sudo apt-get install gcc
 устанавливаем make:
