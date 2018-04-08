@@ -45,8 +45,8 @@
   выбираем наш main (испоняемый файл) Apply Run<br>
 <b>устанавливаем clang-format для редактирования текста</b><br>
   sudo apt-get install clang-format<br>
-  clang-format -style=Chromium -dump-config > .clang-format<br><br>
-  этот файл должен лежать в нашем клонированном репозитории<br>
+  clang-format -style=Chromium -dump-config > .clang-format<br>
+  этот файл должен лежать в нашем клонированном репозитории<br><br><br>
 
 
  <a href="https://github.com/alisatsar/it-academy/tree/master/test/02-1-sdl-static"><b>ссылка на установку библиотеки SDL2</b></a>
