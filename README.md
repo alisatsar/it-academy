@@ -51,5 +51,5 @@
 
 
  <a href="https://github.com/alisatsar/it-academy/tree/master/test/02-1-sdl-static"><b>ссылка на установку библиотеки SDL2</b></a><br>
- <a href="https://infobsd.ru/sites/default/files/git-cheatsheet-ru.pdf"><b>команды Git</b></a>
+ <a href="https://infobsd.ru/sites/default/files/git-cheatsheet-ru.pdf"><b>команды Git</b></a><br>
  <a href="https://evileg.com/ru/post/289/"><b>исключения</b></a>
