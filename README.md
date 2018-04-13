@@ -54,3 +54,5 @@
  <a href="https://infobsd.ru/sites/default/files/git-cheatsheet-ru.pdf"><b>команды Git</b></a><br>
  <a href="https://evileg.com/ru/post/289/"><b>исключения</b></a><br>
  <a href="https://habrahabr.ru/company/mailru/blog/279449/"><b>small string optimization<b></a><br>
+ 
+ <a href="https://github.com/alisatsar/it-academy/blob/master/test/03-1-sdl-loop/README-main-loop.md"><b>lesson 3 MAIN LOOP</b></a><br>
