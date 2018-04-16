@@ -53,8 +53,9 @@ public:
 	virtual bool create_window(
 			const char* title, int pos_x, int pos_y, int width, int height) = 0;
 	virtual bool read_input(event& e) = 0;
-	virtual void render_triagnle(const triangle& t) = 0;
+	virtual void clear_color(const triangle& t) = 0;
 	virtual void unintialize() = 0;
+	virtual void swap_buffers() = 0;
 };
 
 engine* create_engine();

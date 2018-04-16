@@ -52,6 +52,7 @@ class my_tiny_engine : public te::engine
 {
 private:
 	SDL_GLContext gl_context;
+	SDL_Window* window = nullptr;
 
 public:
 	std::string check_version() final
@@ -90,7 +91,7 @@ public:
 
 	bool create_window(const char* title, int pos_x, int pos_y, int width, int height)
 	{
-		SDL_Window* const window = SDL_CreateWindow(
+		window = SDL_CreateWindow(
 				title,
 				pos_x,
 				pos_y,
@@ -170,10 +171,15 @@ public:
 		return false;
 	}
 
-	void render_triagnle(const te::triangle& t) final
+	void clear_color(const te::triangle& t) final
 	{
 		glClearColor(0.f, 1.0, 0.f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
+	void swap_buffers() final
+	{
+		SDL_GL_SwapWindow(window);
 	}
 
 	void unintialize() final

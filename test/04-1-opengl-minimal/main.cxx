@@ -39,10 +39,12 @@ int main()
 				break;
 			}
 		}
+		te::triangle tr{};
+		m->clear_color(tr);
+		m->swap_buffers();
 	};
 
-	te::triangle tr{};
-	m->render_triagnle(tr);
+
 
 	m->unintialize();
 
