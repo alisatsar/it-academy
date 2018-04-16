@@ -56,3 +56,5 @@
  <a href="https://habrahabr.ru/company/mailru/blog/279449/"><b>small string optimization<b></a><br>
  
  <a href="https://github.com/alisatsar/it-academy/blob/master/test/03-1-sdl-loop/README-main-loop.md"><b>lesson 3 MAIN LOOP</b></a><br>
+ 
+ <a href="https://github.com/alisatsar/it-academy/blob/master/test/04-1-opengl-minimal/README_OPENGL.md"><b>lesson 4 OPENGL introduction</b></a><br>
