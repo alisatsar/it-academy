@@ -58,3 +58,5 @@
  <a href="https://github.com/alisatsar/it-academy/blob/master/test/03-1-sdl-loop/README-main-loop.md"><b>lesson 3 MAIN LOOP</b></a><br>
  
  <a href="https://github.com/alisatsar/it-academy/blob/master/test/04-1-opengl-minimal/README_OPENGL.md"><b>lesson 4 OPENGL introduction</b></a><br>
+ 
+ <a href="https://github.com/alisatsar/it-academy/blob/master/test/04-1-opengl-triangle/README_shader.md"><b>lesson 5 SHADERS</b></a><br>
