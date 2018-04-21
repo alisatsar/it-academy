@@ -110,7 +110,7 @@ bool check_input(const SDL_Event& e, const bind*& result)
 	        return b.key == e.key.keysym.sym;
 		} );
 	///функция find_if вернет указатель на итератора за последним,
-	///если не удовлетворит условию поиска ламбда выражения
+	///если не удовлетворит условию поиска ламбда выражения)
 	if(it != std::end(keys))
 	{
 		result = it;
