@@ -19,6 +19,8 @@
 
 #include "picopng.hxx"
 
+
+
 PFNGLGENBUFFERSPROC glGenBuffers = nullptr;
 PFNGLBINDBUFFERPROC glBindBuffer = nullptr;
 PFNGLBUFFERDATAPROC glBufferData = nullptr;
@@ -52,6 +54,34 @@ void get_func_pointer(const char* func_name, T& result)
 	}
 	result = reinterpret_cast<T>(gl_pointer);
 }
+
+#define OM_GL_CHECK()                                                          \
+    {                                                                          \
+        const int err = glGetError();                                          \
+        if (err != GL_NO_ERROR)                                                \
+        {                                                                      \
+            switch (err)                                                       \
+            {                                                                  \
+                case GL_INVALID_ENUM:                                          \
+                    std::cerr << "GL_INVALID_ENUM" << std::endl;               \
+                    break;                                                     \
+                case GL_INVALID_VALUE:                                         \
+                    std::cerr << "GL_INVALID_VALUE" << std::endl;              \
+                    break;                                                     \
+                case GL_INVALID_OPERATION:                                     \
+                    std::cerr << "GL_INVALID_OPERATION" << std::endl;          \
+                    break;                                                     \
+                case GL_INVALID_FRAMEBUFFER_OPERATION:                         \
+                    std::cerr << "GL_INVALID_FRAMEBUFFER_OPERATION"            \
+                              << std::endl;                                    \
+                    break;                                                     \
+                case GL_OUT_OF_MEMORY:                                         \
+                    std::cerr << "GL_OUT_OF_MEMORY" << std::endl;              \
+                    break;                                                     \
+            }                                                                  \
+            assert(false);                                                     \
+        }                                                                      \
+    }
 
 struct bind
 {
@@ -222,7 +252,8 @@ public:
 	{
 		SDL_GL_SwapWindow(window);
         glClearColor(0.f, 1.0, 0.f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);	}
+        glClear(GL_COLOR_BUFFER_BIT);
+	}
 
 	void unintialize() final
 	{
@@ -290,6 +321,7 @@ void main()
 		///CREATE FRAGMENT SHADER
 		GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 		const GLchar* fragment_shader_src = R"(
+precision mediump float;
 varying vec2 v_texcoord;
 uniform sampler2D s_texture;
 void main()
@@ -361,6 +393,10 @@ void main()
 		///binds the buffer object name to the target
 		glEnableVertexAttribArray(0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(te::vertex), &t.v[0].tx);
+		glEnableVertexAttribArray(1);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
 	float get_time_from_init() final
@@ -408,17 +444,21 @@ void main()
 
 		GLuint tex_handl = 0;
 		glGenTextures(1, &tex_handl);
+		OM_GL_CHECK();
 
 		glBindTexture(GL_TEXTURE_2D, tex_handl);
+		OM_GL_CHECK();
 
 		GLint mipmap_level = 0;
 		GLint border = 0;
 		glTexImage2D(GL_TEXTURE_2D, mipmap_level, GL_RGBA, w, h, border,
 				GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-
+		OM_GL_CHECK();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		OM_GL_CHECK();
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		OM_GL_CHECK();
 
 		return true;
 	}

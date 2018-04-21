@@ -36,7 +36,7 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	if(!m->create_window("My window", 0, 0, 300, 300))
+	if(!m->create_window("My window", 0, 0, 600, 600))
 	{
 		return EXIT_FAILURE;
 	}
