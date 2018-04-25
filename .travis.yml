@@ -5,8 +5,11 @@ compiler:
   - gcc
 
 script:
+  - sudo apt-get install libsdl2-2.0
+  - sudo apt-get install libsdl2-dev
+  - sudo apt-get install libglfw3-dev libgles2-mesa-dev
   - cd test
-  - cd 01-1-hello-world
+  - cd 05-3-tiny-animation-texture
   - mkdir build
   - cd build
   - cmake -G "Unix Makefiles" ..
