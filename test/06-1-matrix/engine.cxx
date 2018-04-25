@@ -11,7 +11,6 @@
 #include <string_view>
 #include <vector>
 
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_opengl_glext.h>
@@ -19,7 +18,7 @@
 
 #include "picopng.hxx"
 
-
+using namespace math;
 
 PFNGLGENBUFFERSPROC glGenBuffers = nullptr;
 PFNGLBINDBUFFERPROC glBindBuffer = nullptr;
@@ -54,34 +53,6 @@ void get_func_pointer(const char* func_name, T& result)
 	}
 	result = reinterpret_cast<T>(gl_pointer);
 }
-
-#define OM_GL_CHECK()                                                          \
-    {                                                                          \
-        const int err = glGetError();                                          \
-        if (err != GL_NO_ERROR)                                                \
-        {                                                                      \
-            switch (err)                                                       \
-            {                                                                  \
-                case GL_INVALID_ENUM:                                          \
-                    std::cerr << "GL_INVALID_ENUM" << std::endl;               \
-                    break;                                                     \
-                case GL_INVALID_VALUE:                                         \
-                    std::cerr << "GL_INVALID_VALUE" << std::endl;              \
-                    break;                                                     \
-                case GL_INVALID_OPERATION:                                     \
-                    std::cerr << "GL_INVALID_OPERATION" << std::endl;          \
-                    break;                                                     \
-                case GL_INVALID_FRAMEBUFFER_OPERATION:                         \
-                    std::cerr << "GL_INVALID_FRAMEBUFFER_OPERATION"            \
-                              << std::endl;                                    \
-                    break;                                                     \
-                case GL_OUT_OF_MEMORY:                                         \
-                    std::cerr << "GL_OUT_OF_MEMORY" << std::endl;              \
-                    break;                                                     \
-            }                                                                  \
-            assert(false);                                                     \
-        }                                                                      \
-    }
 
 struct bind
 {
@@ -373,7 +344,7 @@ void main()
 	    int texture_unit = 0;
 	    //select active texture unit
 	    glActiveTexture(GL_TEXTURE0 + texture_unit);
-	    if (!load_texture("girl.png"))
+	    if (!load_texture("boy-320.png"))
 	    {
 	        std::cout << "failed load texture\n";
 	    }
@@ -384,19 +355,15 @@ void main()
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	void render_triangle(te::triangle& t) final
+	void render_triangle(triangle& t) final
 	{
-		///we sent the input vertex data to the GPU and instructed the GPU
-		///how it should process the vertex data within a vertex and fragment shader.
-		///define an array of generic vertex attribute data
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(te::vertex), &t.v[0]);
-		///binds the buffer object name to the target
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].vec.x);
 		glEnableVertexAttribArray(0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(te::vertex), &t.v[0].tx);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].text_vec.x);
 		glEnableVertexAttribArray(1);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 1, 3);
 	}
 
 	float get_time_from_init() final
@@ -408,23 +375,33 @@ void main()
 
 	bool load_texture(std::string_view path) final
 	{
+		//создаем массив чаров
 		std::vector<unsigned char> png_file_in_memory;
+		//path.data() - вернет указатель на первый символ
+		// open file for reading в бинарном режиме
 		std::ifstream ifs(path.data(), std::ios_base::binary);
 		if (!ifs)
 		{
 			return false;
 		}
+		//перемещаем курсор смещение в конец
 		ifs.seekg(0, std::ios_base::end);
+		//узнаем значение курсора, это и есть наш размер
 		size_t pos_in_file = ifs.tellg();
+		//перевыделяем память в контейнере, равном нашему размеру
 		png_file_in_memory.resize(pos_in_file);
+		//перемещаем курсор смещение в начало
 		ifs.seekg(0, std::ios_base::beg);
 		if (!ifs)
 		{
 			return false;
 		}
 
+		//извлекаем символы из потока
 		ifs.read(reinterpret_cast<char*>(png_file_in_memory.data()),
 		    pos_in_file);
+		//вернет истину, если последняя операция в потоке ввода\вывода
+		//завершилась успешно
 		if (!ifs.good())
 		{
 		    return false;
@@ -444,23 +421,38 @@ void main()
 
 		GLuint tex_handl = 0;
 		glGenTextures(1, &tex_handl);
-		OM_GL_CHECK();
 
 		glBindTexture(GL_TEXTURE_2D, tex_handl);
-		OM_GL_CHECK();
 
 		GLint mipmap_level = 0;
 		GLint border = 0;
 		glTexImage2D(GL_TEXTURE_2D, mipmap_level, GL_RGBA, w, h, border,
 				GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
-		OM_GL_CHECK();
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		OM_GL_CHECK();
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		OM_GL_CHECK();
 
 		return true;
+	}
+
+	math::vertex blend_vertex(const math::vertex& vl, const math::vertex& vr,
+	                        const float a)
+	{
+		math::vertex r;
+	    r.vec.x = (1.0f - a) * vl.vec.x + a * vr.vec.x;
+	    r.vec.y = (1.0f - a) * vl.vec.y + a * vr.vec.y;
+	    return r;
+	}
+
+	math::triangle blend(const math::triangle& tl, const math::triangle& tr,
+	                   const float a)
+	{
+		math::triangle r;
+	    r.vert[0] = blend_vertex(tl.vert[0], tr.vert[0], a);
+	    r.vert[1] = blend_vertex(tl.vert[1], tr.vert[1], a);
+	    r.vert[2] = blend_vertex(tl.vert[2], tr.vert[2], a);
+	    return r;
 	}
 };
 

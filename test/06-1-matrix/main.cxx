@@ -1,32 +1,14 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
-//#include <string>
+
 #include <fstream>
 
 #include "engine.hxx"
 
-te::vertex blend_vertex(const te::vertex& vl, const te::vertex& vr,
-                        const float a)
-{
-    te::vertex r;
-    r.vec.x = (1.0f - a) * vl.vec.x + a * vr.vec.x;
-    r.vec.y = (1.0f - a) * vl.vec.y + a * vr.vec.y;
-    return r;
-}
-
-te::triangle blend(const te::triangle& tl, const te::triangle& tr,
-                   const float a)
-{
-    te::triangle r;
-    r.v[0] = blend_vertex(tl.v[0], tr.v[0], a);
-    r.v[1] = blend_vertex(tl.v[1], tr.v[1], a);
-    r.v[2] = blend_vertex(tl.v[2], tr.v[2], a);
-    return r;
-}
-
 int main()
 {
+	using namespace math;
 	std::unique_ptr<te::engine, void(*)(te::engine*)> m(te::create_engine(), te::destroy_engine);
 
 	std::cout << m->check_version();
@@ -42,44 +24,48 @@ int main()
 	}
 	m->create_my_shader();
 
-	te::triangle t1;
+	math::triangle t1;
 
-	t1.v[0].vec.x = -0.5;
-	t1.v[0].vec.y = 0.5;
-	t1.v[0].tx = 0.0;
-	t1.v[0].ty = 1.0;
-	t1.v[1].vec.x = 0.5;
-	t1.v[1].vec.y = 0.5;
-	t1.v[1].tx = 1.0;
-	t1.v[1].ty = 1.0;
-	t1.v[2].vec.x = 0.5;
-	t1.v[2].vec.y = -0.5;
-	t1.v[2].tx = 1.0;
-	t1.v[2].ty = 0.0;
-	//m->scale_triangle(t1, 2);
+	t1.vert[0].vec.x = -0.2f;
+	t1.vert[0].vec.y = -0.2f;
+	t1.vert[0].text_vec.x = 0.0f;
+	t1.vert[0].text_vec.y = 0.f;
+	t1.vert[1].vec.x = 0.2f;
+	t1.vert[1].vec.y = -0.2f;
+	t1.vert[1].text_vec.x = 0.2f;
+	t1.vert[1].text_vec.y = 0.0f;
+	t1.vert[2].vec.x = 0.2f;
+	t1.vert[2].vec.y = 0.2f;
+	t1.vert[2].text_vec.x = 0.2f;
+	t1.vert[2].text_vec.y = 0.2f;
 
-	t1 = t1 * 2.f;
+	math::triangle t2;
 
+	t2.vert[0].vec.x = 0.2f;
+	t2.vert[0].vec.y = 0.2f;
+	t2.vert[0].text_vec.x = 0.2f;
+	t2.vert[0].text_vec.y = 0.2f;
+	t2.vert[1].vec.x = -0.2f;
+	t2.vert[1].vec.y = 0.2f;
+	t2.vert[1].text_vec.x = 0.f;
+	t2.vert[1].text_vec.y = 0.2f;
+	t2.vert[2].vec.x = -0.2f;
+	t2.vert[2].vec.y = -0.2f;
+	t2.vert[2].text_vec.x = 0.f;
+	t2.vert[2].text_vec.y = 0.f;
 
-	te::triangle t2;
+	t1 = t1 * 2.0f;
 
-	t2.v[0].vec.x  = -0.5;
-	t2.v[0].vec.y = 0.5;
-	t2.v[0].tx = 0.0;
-	t2.v[0].ty = 1.0;
-	t2.v[1].vec.x = 0.5;
-	t2.v[1].vec.y = -0.5;
-	t2.v[1].tx = 1.0;
-	t2.v[1].ty = 0.0;
-	t2.v[2].vec.x = -0.5;
-	t2.v[2].vec.y = -0.5;
-	t2.v[2].tx = 0.0;
-	t2.v[2].ty = 0.0;
-
-	//t2 = t2 * 2.f;
-
+	math::matrix mat(3.0f);
+	mat.print();
 
 	bool continue_loop = true;
+
+	float a = 0.f;
+	float b = 0.f;
+
+	float left = 0.f;
+	float right = 0.2f;
 
 	while(continue_loop)
 	{
@@ -97,12 +83,47 @@ int main()
 				break;
 			}
 		}
-		//std::ifstream file("vert_and_tex_coord.txt");
+
+		if((a - b) >= 0.2f)
+		{
+			if(left < 0.8)
+			{
+				left += 0.2;
+			}
+			else
+			{
+				left = 0.0;
+			}
+			if(right < 1.f)
+			{
+				right += 0.2;
+			}
+			else
+			{
+				right = 0.2;
+			}
+
+			t1.vert[0].text_vec.x = left;
+			t2.vert[1].text_vec.x = left;
+			t2.vert[2].text_vec.x = left;
+
+			t1.vert[1].text_vec.x = right;
+			t1.vert[2].text_vec.x = right;
+			t2.vert[0].text_vec.x = right;
+
+			b = a;
+		}
 
 		m->render_triangle(t1);
-		//m->render_triangle(t2);
-		//m->clear_color();
+		m->render_triangle(t2);
+		//m->render_triangle(t3);
+		//m->render_triangle(t4);
+
+
+
 		m->swap_buffers();
+
+		a = m->get_time_from_init();
 	};
 
 	m->unintialize();
