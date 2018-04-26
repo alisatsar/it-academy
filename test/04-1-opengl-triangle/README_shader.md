@@ -150,7 +150,7 @@ glUseProgram(shader_program);
 <a href="http://docs.gl/es2/glVertexAttribPointer"><b>glVertexAttribPointer</b><a><br>
 	
 ```
-te::triangle& t; (наш триугольник)
+te::triangle& t; (наш треугольник)
 glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(te::vertex), &t.v[0]);
 где 0 - это дескриптор
 
