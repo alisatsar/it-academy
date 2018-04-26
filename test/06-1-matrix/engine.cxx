@@ -357,11 +357,11 @@ void main()
 
 	void render_triangle(triangle& t) final
 	{
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].vec.x);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].vect.x);
 		glEnableVertexAttribArray(0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].text_vec.x);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), &t.vert[0].tex_vect.x);
 		glEnableVertexAttribArray(1);
 		glDrawArrays(GL_TRIANGLES, 1, 3);
 	}
@@ -440,8 +440,8 @@ void main()
 	                        const float a)
 	{
 		math::vertex r;
-	    r.vec.x = (1.0f - a) * vl.vec.x + a * vr.vec.x;
-	    r.vec.y = (1.0f - a) * vl.vec.y + a * vr.vec.y;
+	    r.vect.x = (1.0f - a) * vl.vect.x + a * vr.vect.x;
+	    r.vect.y = (1.0f - a) * vl.vect.y + a * vr.vect.y;
 	    return r;
 	}
 

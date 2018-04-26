@@ -24,40 +24,49 @@ int main()
 	}
 	m->create_my_shader();
 
+	math::vec_2 v(0.2, 0.2);
+
+
 	math::triangle t1;
 
-	t1.vert[0].vec.x = -0.2f;
-	t1.vert[0].vec.y = -0.2f;
-	t1.vert[0].text_vec.x = 0.0f;
-	t1.vert[0].text_vec.y = 0.f;
-	t1.vert[1].vec.x = 0.2f;
-	t1.vert[1].vec.y = -0.2f;
-	t1.vert[1].text_vec.x = 0.2f;
-	t1.vert[1].text_vec.y = 0.0f;
-	t1.vert[2].vec.x = 0.2f;
-	t1.vert[2].vec.y = 0.2f;
-	t1.vert[2].text_vec.x = 0.2f;
-	t1.vert[2].text_vec.y = 0.2f;
+	t1.vert[0].vect.x = -0.2;
+	t1.vert[0].vect.y = -0.2;
+	t1.vert[0].tex_vect.x = 0.0;
+	t1.vert[0].tex_vect.y = 0.0;
+	t1.vert[1].vect.x = 0.2;
+	t1.vert[1].vect.y = -0.2;
+	t1.vert[1].tex_vect.x = 0.2;
+	t1.vert[1].tex_vect.y = 0.0;
+	t1.vert[2].vect.x = 0.2;
+	t1.vert[2].vect.y = 0.2;
+	t1.vert[2].tex_vect.x = 0.2;
+	t1.vert[2].tex_vect.y = 0.2;
 
 	math::triangle t2;
 
-	t2.vert[0].vec.x = 0.2f;
-	t2.vert[0].vec.y = 0.2f;
-	t2.vert[0].text_vec.x = 0.2f;
-	t2.vert[0].text_vec.y = 0.2f;
-	t2.vert[1].vec.x = -0.2f;
-	t2.vert[1].vec.y = 0.2f;
-	t2.vert[1].text_vec.x = 0.f;
-	t2.vert[1].text_vec.y = 0.2f;
-	t2.vert[2].vec.x = -0.2f;
-	t2.vert[2].vec.y = -0.2f;
-	t2.vert[2].text_vec.x = 0.f;
-	t2.vert[2].text_vec.y = 0.f;
+	t2.vert[0].vect.x = 0.2;
+	t2.vert[0].vect.y = 0.2;
+	t2.vert[0].tex_vect.x = 0.2;
+	t2.vert[0].tex_vect.y = 0.2;
+	t2.vert[1].vect.x = -0.2;
+	t2.vert[1].vect.y = 0.2;
+	t2.vert[1].tex_vect.x = 0.0;
+	t2.vert[1].tex_vect.y = 0.2;
+	t2.vert[2].vect.x = -0.2;
+	t2.vert[2].vect.y = -0.2;
+	t2.vert[2].tex_vect.x = 0.0;
+	t2.vert[2].tex_vect.y = 0.0;
 
-	t1 = t1 * 2.0f;
+	//t1 = t1 * 0.1;
+	//t1 = t1 + v;
+	//t2 = t2 * 0.1;
+	////t2 = t2 + v;
 
-	math::matrix mat(3.0f);
-	mat.print();
+	t1.rotate(-90);
+	t2.rotate(-90);
+
+	t1.print();
+	t2.print();
 
 	bool continue_loop = true;
 
@@ -103,23 +112,19 @@ int main()
 				right = 0.2;
 			}
 
-			t1.vert[0].text_vec.x = left;
-			t2.vert[1].text_vec.x = left;
-			t2.vert[2].text_vec.x = left;
+			t1.vert[0].tex_vect.x = left;
+			t2.vert[1].tex_vect.x = left;
+			t2.vert[2].tex_vect.x = left;
 
-			t1.vert[1].text_vec.x = right;
-			t1.vert[2].text_vec.x = right;
-			t2.vert[0].text_vec.x = right;
+			t1.vert[1].tex_vect.x = right;
+			t1.vert[2].tex_vect.x = right;
+			t2.vert[0].tex_vect.x = right;
 
 			b = a;
 		}
 
 		m->render_triangle(t1);
 		m->render_triangle(t2);
-		//m->render_triangle(t3);
-		//m->render_triangle(t4);
-
-
 
 		m->swap_buffers();
 
