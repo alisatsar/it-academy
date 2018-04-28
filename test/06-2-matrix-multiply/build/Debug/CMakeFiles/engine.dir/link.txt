@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libengine.so -o libengine.so CMakeFiles/engine.dir/engine.cxx.o -Wl,-rpath,/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug:/usr/local/lib libmy_math.so -pthread /usr/local/lib/libSDL2-2.0d.so -dl -lGLESv2 -lglfw 

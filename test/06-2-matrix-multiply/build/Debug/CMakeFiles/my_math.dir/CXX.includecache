@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.cxx
+my_math.hxx
+/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.hxx
+cmath
+-
+
+/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.hxx
+iostream
+-
+

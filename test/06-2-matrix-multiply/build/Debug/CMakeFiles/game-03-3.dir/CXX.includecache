@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/alisatsar/Desktop/online-lessons/06-3-test/engine.hxx
+my_math.hxx
+/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.hxx
+string
+-
+iosfwd
+-
+string_view
+-
+
+/home/alisatsar/Desktop/online-lessons/06-3-test/main.cxx
+cstdlib
+-
+iostream
+-
+memory
+-
+fstream
+-
+engine.hxx
+/home/alisatsar/Desktop/online-lessons/06-3-test/engine.hxx
+
+/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.hxx
+iostream
+-
+

@@ -1,0 +1,5 @@
+/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug/CMakeFiles/rebuild_cache.dir
+/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug/CMakeFiles/game-03-3.dir
+/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug/CMakeFiles/edit_cache.dir
+/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug/CMakeFiles/engine.dir
+/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug/CMakeFiles/my_math.dir

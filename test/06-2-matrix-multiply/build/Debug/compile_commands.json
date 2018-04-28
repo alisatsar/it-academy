@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug",
+  "command": "/usr/bin/c++    -g   -std=gnu++1z -o CMakeFiles/game-03-3.dir/main.cxx.o -c /home/alisatsar/Desktop/online-lessons/06-3-test/main.cxx",
+  "file": "/home/alisatsar/Desktop/online-lessons/06-3-test/main.cxx"
+},
+{
+  "directory": "/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug",
+  "command": "/usr/bin/c++  -Dengine_EXPORTS  -g -fPIC   -std=gnu++1z -o CMakeFiles/engine.dir/engine.cxx.o -c /home/alisatsar/Desktop/online-lessons/06-3-test/engine.cxx",
+  "file": "/home/alisatsar/Desktop/online-lessons/06-3-test/engine.cxx"
+},
+{
+  "directory": "/home/alisatsar/Desktop/online-lessons/06-3-test/build/Debug",
+  "command": "/usr/bin/c++  -Dmy_math_EXPORTS  -g -fPIC   -std=gnu++1z -o CMakeFiles/my_math.dir/my_math.cxx.o -c /home/alisatsar/Desktop/online-lessons/06-3-test/my_math.cxx",
+  "file": "/home/alisatsar/Desktop/online-lessons/06-3-test/my_math.cxx"
+}
+]

@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libmy_math.so -o libmy_math.so CMakeFiles/my_math.dir/my_math.cxx.o 
