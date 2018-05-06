@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <variant>
+#include <vector>
 
 #ifndef OM_DECLSPEC
 #define OM_DECLSPEC
@@ -174,6 +175,7 @@ public:
     virtual const v2* data() const = 0;
     /// count of vertexes
     virtual size_t size() const = 0;
+    virtual tri2 get_triangle(int index) const = 0;
 };
 
 class OM_DECLSPEC sound
@@ -219,7 +221,7 @@ public:
     void render(const tri2&, texture*);
     void render(const tri2&, texture*, const mat2x3& m);
     void render(const vbo&, texture*, const mat2x3&);
-    void start_animate(const vbo& buff, texture* tex, int count_sprite, float sec);
+    void start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3&);
     void swap_buffers();
     void uninitialize();
 
@@ -235,7 +237,7 @@ struct OM_DECLSPEC lila
     virtual void on_event(om::event&)                             = 0;
     virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
     virtual void on_render() const                                = 0;
-    virtual void on_animate(int count_sprite, om::texture* tex) = 0;
+    virtual void on_animate(float count_sprite) = 0;
 };
 
 } // end namespace om

@@ -16,7 +16,6 @@
 #include <stdexcept>
 #include <string_view>
 #include <tuple>
-#include <vector>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -203,7 +202,11 @@ public:
     ~vertex_buffer_impl() final;
 
     const v2*      data() const final { return &triangles.data()->v[0]; }
-    virtual size_t size() const final { return triangles.size() * 3; }
+    size_t size() const final { return triangles.size() * 3; }
+    tri2 get_triangle(int index) const
+    {
+    	return triangles[index];
+    }
 
 private:
     std::vector<tri2> triangles;
@@ -976,17 +979,18 @@ void engine::render(const vbo& buff, texture* tex, const mat2x3& m)
     OM_GL_CHECK();
 }
 
-void start_animate(const vbo& buff, texture* tex, int count_sprite, float sec)
+void engine::start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3& m)
 {
 	static float a = 0.f;
 	static float b = 0.f;
 
-	float size = 1 / count_sprite;
-
-	buff
+	float size = 1.f / count_sprite;
 
 	static float left = 0.f;
-	static float right = size * 4;
+	static float right = 0.142;
+
+	tri2 t1 = buff.get_triangle(0);
+	tri2 t2 = buff.get_triangle(1);
 
 	if((a - b) >= sec)
 	{
@@ -1007,18 +1011,21 @@ void start_animate(const vbo& buff, texture* tex, int count_sprite, float sec)
 			right = 0.2;
 		}
 
-		right_t.vert[0].tex_vect.x = left;
-		left_t.vert[1].tex_vect.x = left;
-		left_t.vert[2].tex_vect.x = left;
+		t1.v[0].uv.x = left;
+		t1.v[1].uv.x = right;
+		t1.v[2].uv.x = right;
 
-		right_t.vert[1].tex_vect.x = right;
-		right_t.vert[2].tex_vect.x = right;
-		left_t.vert[0].tex_vect.x = right;
+		t2.v[0].uv.x = right;
+		t2.v[1].uv.x = left;
+		t2.v[2].uv.x = left;
 
 		b = a;
 	}
 
 	a = get_time_from_init();
+
+	render(t1, tex, m);
+	render(t2, tex, m);
 }
 
 void engine::swap_buffers()

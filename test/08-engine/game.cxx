@@ -22,6 +22,7 @@ public:
     void on_event(om::event&) final;
     void on_update(std::chrono::milliseconds frame_delta) final;
     void on_render() const final;
+    void on_animate(float count_sprite) final;
 
 private:
     om::engine&  engine;
@@ -139,14 +140,15 @@ void tanks_game::on_render() const
     engine.render(*vertex_buf, texture, m);
 }
 
-void on_animate(int count_sprite, om::texture* tex)
+void tanks_game::on_animate(float count_sprite)
 {
-
+	om::mat2x3 m;
+	engine.start_animate(*vertex_buf, texture, count_sprite, 0.2, m);
 }
 
 int initialize_and_start_main_loop()
 {
-    om::engine engine("");
+	om::engine engine("");
 
     std::unique_ptr<om::lila> game = om_tat_sat(engine);
 
@@ -162,7 +164,7 @@ int initialize_and_start_main_loop()
         }
 
         game->on_update(std::chrono::milliseconds(1));
-        game->on_render();
+        game->on_animate(7.f);
 
         engine.swap_buffers();
     }
