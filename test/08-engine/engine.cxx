@@ -90,107 +90,14 @@ static void load_gl_func(const char* func_name, T& result)
         }                                                                      \
     }
 
-namespace om
-{
+om::texture::~texture() {}
 
-vec2::vec2()
-    : x(0.f)
-    , y(0.f)
-{
-}
-vec2::vec2(float x_, float y_)
-    : x(x_)
-    , y(y_)
-{
-}
+om::vbo::~vbo() {}
 
-vec2 operator+(const vec2& l, const vec2& r)
-{
-    vec2 result;
-    result.x = l.x + r.x;
-    result.y = l.y + r.y;
-    return result;
-}
-
-mat2x3::mat2x3()
-    : col0(1.0f, 0.f)
-    , col1(0.f, 1.f)
-    , delta(0.f, 0.f)
-{
-}
-
-mat2x3 mat2x3::identiry()
-{
-    return mat2x3::scale(1.f);
-}
-
-mat2x3 mat2x3::scale(float scale)
-{
-    mat2x3 result;
-    result.col0.x = scale;
-    result.col1.y = scale;
-    return result;
-}
-
-mat2x3 mat2x3::scale(float sx, float sy)
-{
-    mat2x3 r;
-    r.col0.x = sx;
-    r.col1.y = sy;
-    return r;
-}
-
-mat2x3 mat2x3::rotation(float thetha)
-{
-    mat2x3 result;
-
-    result.col0.x = std::cos(thetha);
-    result.col0.y = std::sin(thetha);
-
-    result.col1.x = -std::sin(thetha);
-    result.col1.y = std::cos(thetha);
-
-    return result;
-}
-
-mat2x3 mat2x3::move(const vec2& delta)
-{
-    mat2x3 r = mat2x3::identiry();
-    r.delta  = delta;
-    return r;
-}
-
-vec2 operator*(const vec2& v, const mat2x3& m)
-{
-    vec2 result;
-    result.x = v.x * m.col0.x + v.y * m.col0.y + m.delta.x;
-    result.y = v.x * m.col1.x + v.y * m.col1.y + m.delta.y;
-    return result;
-}
-
-mat2x3 operator*(const mat2x3& m1, const mat2x3& m2)
-{
-    mat2x3 r;
-
-    r.col0.x = m1.col0.x * m2.col0.x + m1.col1.x * m2.col0.y;
-    r.col1.x = m1.col0.x * m2.col1.x + m1.col1.x * m2.col1.y;
-    r.col0.y = m1.col0.y * m2.col0.x + m1.col1.y * m2.col0.y;
-    r.col1.y = m1.col0.y * m2.col1.x + m1.col1.y * m2.col1.y;
-
-    r.delta.x = m1.delta.x * m2.col0.x + m1.delta.y * m2.col0.y + m2.delta.x;
-    r.delta.y = m1.delta.x * m2.col1.x + m1.delta.y * m2.col1.y + m2.delta.y;
-
-    return r;
-}
-
-texture::~texture() {}
-
-vbo::~vbo() {}
-
-class vertex_buffer_impl final : public vbo
+class vertex_buffer_impl final : public om::vbo
 {
 public:
-    vertex_buffer_impl(const tri2* tri, std::size_t n)
+    vertex_buffer_impl(const om::tri2* tri, std::size_t n)
         : triangles(n)
     {
         assert(tri != nullptr);
@@ -201,15 +108,15 @@ public:
     }
     ~vertex_buffer_impl() final;
 
-    const v2*      data() const final { return &triangles.data()->v[0]; }
+    const om::v2*      data() const final { return &triangles.data()->v[0]; }
     size_t size() const final { return triangles.size() * 3; }
-    tri2 get_triangle(int index) const
+    om::tri2 get_triangle(int index) const
     {
     	return triangles[index];
     }
 
 private:
-    std::vector<tri2> triangles;
+    std::vector<om::tri2> triangles;
 };
 
 static std::string_view get_sound_format_name(uint16_t format_value)
@@ -258,7 +165,7 @@ class sound_buffer_impl;
 
 std::vector<sound_buffer_impl*> sounds;
 
-class sound_buffer_impl final : public sound
+class sound_buffer_impl final : public om::sound
 {
 public:
     sound_buffer_impl(std::string_view path, SDL_AudioDeviceID device,
@@ -369,7 +276,7 @@ sound_buffer_impl::sound_buffer_impl(std::string_view  path,
     }
 }
 
-sound::~sound() {}
+om::sound::~sound() {}
 
 sound_buffer_impl::~sound_buffer_impl()
 {
@@ -383,7 +290,7 @@ sound_buffer_impl::~sound_buffer_impl()
 
 vertex_buffer_impl::~vertex_buffer_impl() {}
 
-class texture_gl_es20 final : public texture
+class texture_gl_es20 final : public om::texture
 {
 public:
     explicit texture_gl_es20(std::string_view path);
@@ -456,7 +363,7 @@ public:
         OM_GL_CHECK();
     }
 
-    void set_uniform(std::string_view uniform_name, const color& c)
+    void set_uniform(std::string_view uniform_name, const om::color& c)
     {
         const int location =
             glGetUniformLocation(program_id, uniform_name.data());
@@ -471,7 +378,7 @@ public:
         OM_GL_CHECK();
     }
 
-    void set_uniform(std::string_view uniform_name, const mat2x3& m)
+    void set_uniform(std::string_view uniform_name, const om::mat2x3& m)
     {
         const int location =
             glGetUniformLocation(program_id, uniform_name.data());
@@ -580,7 +487,7 @@ private:
     GLuint program_id  = 0;
 };
 
-std::ostream& operator<<(std::ostream& stream, const input_data& i)
+std::ostream& operator<<(std::ostream& stream, const om::input_data& i)
 {
     static const std::array<std::string_view, 8> key_names = {
         { "left", "right", "up", "down", "select", "start", "button1",
@@ -593,40 +500,25 @@ std::ostream& operator<<(std::ostream& stream, const input_data& i)
     return stream;
 }
 
-std::ostream& operator<<(std::ostream& stream, const hardware_data& h)
+std::ostream& operator<<(std::ostream& stream, const om::hardware_data& h)
 {
     stream << "reset console: " << h.is_reset;
     return stream;
 }
 
-std::ostream& operator<<(std::ostream& stream, const event& e)
-{
-    switch (e.type)
-    {
-        case om::event_type::input_key:
-            stream << std::get<om::input_data>(e.info);
-            break;
-        case om::event_type::hardware:
-            stream << std::get<om::hardware_data>(e.info);
-            break;
-    };
-    return stream;
-}
-
-tri0::tri0()
-    : v{ v0(), v0(), v0() }
-{
-}
-
-tri1::tri1()
-    : v{ v1(), v1(), v1() }
-{
-}
-
-tri2::tri2()
-    : v{ v2(), v2(), v2() }
-{
-}
+//std::ostream& operator<<(std::ostream& stream, const om::event& e)
+//{
+//    switch (e.type)
+//    {
+//        case om::event_type::input_key:
+//            stream << std::get<om::input_data>(e.info);
+//            break;
+//        case om::event_type::hardware:
+//            stream << std::get<om::hardware_data>(e.info);
+//            break;
+//    };
+//    return stream;
+//}
 
 std::ostream& operator<<(std::ostream& out, const SDL_version& v)
 {
@@ -636,118 +528,39 @@ std::ostream& operator<<(std::ostream& out, const SDL_version& v)
     return out;
 }
 
-std::istream& operator>>(std::istream& is, mat2x3& m)
-{
-    is >> m.col0.x;
-    is >> m.col1.x;
-    is >> m.col0.y;
-    is >> m.col1.y;
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, vec2& v)
-{
-    is >> v.x;
-    is >> v.y;
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, color& c)
-{
-    float r = 0.f;
-    float g = 0.f;
-    float b = 0.f;
-    float a = 0.f;
-    is >> r;
-    is >> g;
-    is >> b;
-    is >> a;
-    c = color(r, g, b, a);
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, v0& v)
-{
-    is >> v.pos.x;
-    is >> v.pos.y;
-
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, v1& v)
-{
-    is >> v.pos.x;
-    is >> v.pos.y;
-    is >> v.c;
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, v2& v)
-{
-    is >> v.pos.x;
-    is >> v.pos.y;
-    is >> v.uv;
-    is >> v.c;
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, tri0& t)
-{
-    is >> t.v[0];
-    is >> t.v[1];
-    is >> t.v[2];
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, tri1& t)
-{
-    is >> t.v[0];
-    is >> t.v[1];
-    is >> t.v[2];
-    return is;
-}
-
-std::istream& operator>>(std::istream& is, tri2& t)
-{
-    is >> t.v[0];
-    is >> t.v[1];
-    is >> t.v[2];
-    return is;
-}
-
 struct bind
 {
-    bind(std::string_view s, SDL_Keycode k, keys om_k)
+    bind(std::string_view s, SDL_Keycode k, om::keys om_k)
         : name(s)
-        , key(k)
+        , sdl_key(k)
         , om_key(om_k)
     {
     }
 
     std::string_view name;
-    SDL_Keycode      key;
+    SDL_Keycode      sdl_key;
 
     om::keys om_key;
 };
 
-const std::array<bind, 8> keys{
-    { bind{ "up", SDLK_w, keys::up }, bind{ "left", SDLK_a, keys::left },
-      bind{ "down", SDLK_s, keys::down }, bind{ "right", SDLK_d, keys::right },
-      bind{ "button1", SDLK_LCTRL, keys::button1 },
-      bind{ "button2", SDLK_SPACE, keys::button2 },
-      bind{ "select", SDLK_ESCAPE, keys::select },
-      bind{ "start", SDLK_RETURN, keys::start } }
+const std::array<bind, 8> e_keys{
+    { bind{ "up", SDLK_w, om::keys::up }, bind{ "left", SDLK_a, om::keys::left },
+      bind{ "down", SDLK_s, om::keys::down }, bind{ "right", SDLK_d, om::keys::right },
+      bind{ "button1", SDLK_LCTRL, om::keys::button1 },
+      bind{ "button2", SDLK_SPACE, om::keys::button2 },
+      bind{ "select", SDLK_ESCAPE, om::keys::select },
+      bind{ "start", SDLK_RETURN, om::keys::start } }
 };
 
 static bool check_input(const SDL_Event& e, const bind*& result)
 {
     using namespace std;
-
-    const auto it = find_if(begin(keys), end(keys), [&](const bind& b) {
-        return b.key == e.key.keysym.sym;
+    using namespace om;
+    const auto it = find_if(begin(e_keys), end(e_keys), [&](const bind& b) {
+        return b.sdl_key == e.key.keysym.sym;
     });
 
-    if (it != end(keys))
+    if (it != end(e_keys))
     {
         result = &(*it);
         return true;
@@ -756,7 +569,7 @@ static bool check_input(const SDL_Event& e, const bind*& result)
 }
 
 /// return seconds from initialization
-float engine::get_time_from_init()
+float om::engine::get_time_from_init()
 {
     std::uint32_t ms_from_library_initialization = SDL_GetTicks();
     float         seconds = ms_from_library_initialization * 0.001f;
@@ -764,7 +577,7 @@ float engine::get_time_from_init()
 }
 /// pool event from input queue
 /// return true if more events in queue
-bool engine::read_event(event& e)
+bool om::engine::read_event(event& e)
 {
     using namespace std;
     // collect all events from SDL
@@ -795,39 +608,39 @@ bool engine::read_event(event& e)
     return false;
 }
 
-bool engine::is_key_down(const enum keys key)
+bool om::engine::is_key_down(const enum om::keys key)
 {
     const auto it = std::find_if(
-        begin(keys), end(keys), [&](const bind& b) { return b.om_key == key; });
+        std::begin(e_keys), std::end(e_keys), [&](const bind& b) { return b.om_key == key; });
 
-    if (it != end(keys))
+    if (it != end(e_keys))
     {
         const std::uint8_t* state         = SDL_GetKeyboardState(nullptr);
-        int                 sdl_scan_code = SDL_GetScancodeFromKey(it->key);
+        int                 sdl_scan_code = SDL_GetScancodeFromKey(it->sdl_key);
         return state[sdl_scan_code];
     }
     return false;
 }
 
-texture* engine::create_texture(std::string_view path)
+om::texture* om::engine::create_texture(std::string_view path)
 {
     return new texture_gl_es20(path);
 }
-void engine::destroy_texture(texture* t)
+void om::engine::destroy_texture(texture* t)
 {
     delete t;
 }
 
-vbo* engine::create_vbo(const tri2* triangles, std::size_t n)
+om::vbo* om::engine::create_vbo(const om::tri2* triangles, std::size_t n)
 {
     return new vertex_buffer_impl(triangles, n);
 }
-void engine::destroy_vbo(vbo* buffer)
+void om::engine::destroy_vbo(vbo* buffer)
 {
     delete buffer;
 }
 
-sound* engine::create_sound(std::string_view path)
+om::sound* om::engine::create_sound(std::string_view path)
 {
     SDL_LockAudioDevice(audio_device);
     sound_buffer_impl* s =
@@ -836,12 +649,12 @@ sound* engine::create_sound(std::string_view path)
     SDL_UnlockAudioDevice(audio_device);
     return s;
 }
-void engine::destroy_sound(sound* sound)
+void om::engine::destroy_sound(om::sound* sound)
 {
     delete sound;
 }
 
-void engine::render(const tri0& t, const color& c)
+void om::engine::render(const om::tri0& t, const om::color& c)
 {
     shader00->use();
     shader00->set_uniform("u_color", c);
@@ -854,7 +667,7 @@ void engine::render(const tri0& t, const color& c)
     glDrawArrays(GL_TRIANGLES, 0, 3);
     OM_GL_CHECK();
 }
-void engine::render(const tri1& t)
+void om::engine::render(const tri1& t)
 {
     shader01->use();
     // positions
@@ -876,7 +689,7 @@ void engine::render(const tri1& t)
     glDisableVertexAttribArray(1);
     OM_GL_CHECK();
 }
-void engine::render(const tri2& t, texture* tex)
+void om::engine::render(const om::tri2& t, om::texture* tex)
 {
     shader02->use();
     texture_gl_es20* texture = static_cast<texture_gl_es20*>(tex);
@@ -909,7 +722,7 @@ void engine::render(const tri2& t, texture* tex)
     glDisableVertexAttribArray(2);
     OM_GL_CHECK();
 }
-void engine::render(const tri2& t, texture* tex, const mat2x3& m)
+void om::engine::render(const tri2& t, texture* tex, const mat2x3& m)
 {
     shader03->use();
     texture_gl_es20* texture = static_cast<texture_gl_es20*>(tex);
@@ -943,7 +756,7 @@ void engine::render(const tri2& t, texture* tex, const mat2x3& m)
     glDisableVertexAttribArray(2);
     OM_GL_CHECK();
 }
-void engine::render(const vbo& buff, texture* tex, const mat2x3& m)
+void om::engine::render(const vbo& buff, texture* tex, const mat2x3& m)
 {
     shader03->use();
     texture_gl_es20* texture = static_cast<texture_gl_es20*>(tex);
@@ -979,7 +792,7 @@ void engine::render(const vbo& buff, texture* tex, const mat2x3& m)
     OM_GL_CHECK();
 }
 
-void engine::start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3& m)
+void om::engine::start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3& m)
 {
 	static float a = 0.f;
 	static float b = 0.f;
@@ -1028,7 +841,7 @@ void engine::start_animate(const vbo& buff, texture* tex, float count_sprite, fl
 	render(t2, tex, m);
 }
 
-void engine::swap_buffers()
+void om::engine::swap_buffers()
 {
     SDL_GL_SwapWindow(window);
 
@@ -1036,14 +849,14 @@ void engine::swap_buffers()
     OM_GL_CHECK();
 }
 
-void engine::exit(int return_code)
+void om::engine::exit(int return_code)
 {
     std::exit(return_code);
 }
 
 static void audio_callback(void*, uint8_t*, int);
 
-engine::engine(std::string_view)
+om::engine::engine(std::string_view)
     : log(std::cout)
 {
     if (already_exist)
@@ -1353,7 +1166,7 @@ engine::engine(std::string_view)
 
     already_exist = true;
 }
-engine::~engine()
+om::engine::~engine()
 {
     if (already_exist)
     {
@@ -1363,71 +1176,6 @@ engine::~engine()
 
         already_exist = false;
     }
-}
-
-color::color(std::uint32_t rgba_)
-    : rgba(rgba_)
-{
-}
-color::color(float r, float g, float b, float a)
-{
-    assert(r <= 1 && r >= 0);
-    assert(g <= 1 && g >= 0);
-    assert(b <= 1 && b >= 0);
-    assert(a <= 1 && a >= 0);
-
-    std::uint32_t r_ = static_cast<std::uint32_t>(r * 255);
-    std::uint32_t g_ = static_cast<std::uint32_t>(g * 255);
-    std::uint32_t b_ = static_cast<std::uint32_t>(b * 255);
-    std::uint32_t a_ = static_cast<std::uint32_t>(a * 255);
-
-    rgba = a_ << 24 | b_ << 16 | g_ << 8 | r_;
-}
-
-float color::get_r() const
-{
-    std::uint32_t r_ = (rgba & 0x000000FF) >> 0;
-    return r_ / 255.f;
-}
-float color::get_g() const
-{
-    std::uint32_t g_ = (rgba & 0x0000FF00) >> 8;
-    return g_ / 255.f;
-}
-float color::get_b() const
-{
-    std::uint32_t b_ = (rgba & 0x00FF0000) >> 16;
-    return b_ / 255.f;
-}
-float color::get_a() const
-{
-    std::uint32_t a_ = (rgba & 0xFF000000) >> 24;
-    return a_ / 255.f;
-}
-
-void color::set_r(const float r)
-{
-    std::uint32_t r_ = static_cast<std::uint32_t>(r * 255);
-    rgba &= 0xFFFFFF00;
-    rgba |= (r_ << 0);
-}
-void color::set_g(const float g)
-{
-    std::uint32_t g_ = static_cast<std::uint32_t>(g * 255);
-    rgba &= 0xFFFF00FF;
-    rgba |= (g_ << 8);
-}
-void color::set_b(const float b)
-{
-    std::uint32_t b_ = static_cast<std::uint32_t>(b * 255);
-    rgba &= 0xFF00FFFF;
-    rgba |= (b_ << 16);
-}
-void color::set_a(const float a)
-{
-    std::uint32_t a_ = static_cast<std::uint32_t>(a * 255);
-    rgba &= 0x00FFFFFF;
-    rgba |= a_ << 24;
 }
 
 texture_gl_es20::texture_gl_es20(std::string_view path)
@@ -1455,8 +1203,8 @@ texture_gl_es20::texture_gl_es20(std::string_view path)
     }
 
     const om::png_image img = decode_png_file_from_memory(
-        png_file_in_memory, convert_color::to_rgba32,
-        origin_point::bottom_left);
+    		png_file_in_memory, om::convert_color::to_rgba32,
+			om::origin_point::bottom_left);
 
     // if there's an error, display it
     if (img.error != 0)
@@ -1534,6 +1282,13 @@ void audio_callback(void*, uint8_t* stream, int stream_size)
     }
 }
 
-lila::~lila() = default;
+om::lila::~lila() = default;
 
-} // end namespace om
+om::location::location() : x(0), y(0) {}
+
+om::location::location(uint32_t x_, uint32_t y_) : x(x_), y(y_) {}
+
+om::vec2 om::location::get_sdl2_coordinate()
+{
+	return om::vec2();
+}

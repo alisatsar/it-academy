@@ -78,7 +78,7 @@ void tanks_game::on_initialize()
 
 void tanks_game::on_event(om::event& event)
 {
-    std::cout << event << std::endl;
+    //std::cout << event << std::endl;
     switch (event.type)
     {
         case om::event_type::hardware:
