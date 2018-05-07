@@ -987,16 +987,16 @@ void engine::start_animate(const vbo& buff, texture* tex, float count_sprite, fl
 	float size = 1.f / count_sprite;
 
 	static float left = 0.f;
-	static float right = 0.142;
+	static float right = size;
 
-	tri2 t1 = buff.get_triangle(0);
-	tri2 t2 = buff.get_triangle(1);
+	static tri2 t1 = buff.get_triangle(0);
+	static tri2 t2 = buff.get_triangle(1);
 
 	if((a - b) >= sec)
 	{
-		if(left < 0.8)
+		if(left < size * 6)
 		{
-			left += 0.2;
+			left += size;
 		}
 		else
 		{
@@ -1004,11 +1004,11 @@ void engine::start_animate(const vbo& buff, texture* tex, float count_sprite, fl
 		}
 		if(right < 1.f)
 		{
-			right += 0.2;
+			right += size;
 		}
 		else
 		{
-			right = 0.2;
+			right = size;
 		}
 
 		t1.v[0].uv.x = left;

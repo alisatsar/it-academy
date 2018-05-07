@@ -132,18 +132,18 @@ void tanks_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 void tanks_game::on_render() const
 {
-    om::mat2x3 move   = om::mat2x3::move(current_tank_pos);
-    om::mat2x3 aspect = om::mat2x3::scale(1, 640.f / 480.f);
-    om::mat2x3 rot    = om::mat2x3::rotation(current_tank_direction);
-    om::mat2x3 m      = rot * move * aspect;
+    //om::mat2x3 move   = om::mat2x3::move(current_tank_pos);
+    //om::mat2x3 aspect = om::mat2x3::scale(1, 640.f / 480.f);
+    //om::mat2x3 rot    = om::mat2x3::rotation(current_tank_direction);
+    //om::mat2x3 m      = rot * move * aspect;
 
-    engine.render(*vertex_buf, texture, m);
+    //engine.render(*vertex_buf, texture, m);
 }
 
 void tanks_game::on_animate(float count_sprite)
 {
 	om::mat2x3 m;
-	engine.start_animate(*vertex_buf, texture, count_sprite, 0.2, m);
+	engine.start_animate(*vertex_buf, texture, count_sprite, 0.5, m);
 }
 
 int initialize_and_start_main_loop()
@@ -164,7 +164,7 @@ int initialize_and_start_main_loop()
         }
 
         game->on_update(std::chrono::milliseconds(1));
-        game->on_animate(7.f);
+        game->on_animate(8.f);
 
         engine.swap_buffers();
     }
