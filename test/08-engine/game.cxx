@@ -22,7 +22,7 @@ public:
     void on_event(om::event&) final;
     void on_update(std::chrono::milliseconds frame_delta) final;
     void on_render() const final;
-    void on_animate(float count_sprite) final;
+    void on_animate() final;
 
 private:
     om::engine&  engine;
@@ -72,6 +72,8 @@ void tanks_game::on_initialize()
             return;
         }
     }
+
+    he = new hero(texture, 7);
 
     snd = engine.create_sound("t2_no_problemo.wav");
 }
@@ -140,10 +142,12 @@ void tanks_game::on_render() const
     //engine.render(*vertex_buf, texture, m);
 }
 
-void tanks_game::on_animate(float count_sprite)
+void tanks_game::on_animate()
 {
 	om::mat2x3 m;
-	engine.start_animate(*vertex_buf, texture, count_sprite, 0.5, m);
+
+	engine.render(*he->get_character_vbo(), he->get_character_texture(), m);
+	//engine.start_animate(*vertex_buf, texture, count_sprite, 0.5, m);
 }
 
 int initialize_and_start_main_loop()
@@ -156,6 +160,7 @@ int initialize_and_start_main_loop()
 
     game->on_initialize();
 
+
     while (true)
     {
         om::event event;
@@ -166,7 +171,7 @@ int initialize_and_start_main_loop()
         }
 
         game->on_update(std::chrono::milliseconds(1));
-        game->on_animate(8.f);
+        game->on_animate();
 
         engine.swap_buffers();
     }

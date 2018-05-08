@@ -1,11 +1,10 @@
 #pragma once
 
-#include <array>
-
 #include "e_math.hxx"
 #include "color.hxx"
 #include "engine.hxx"
 #include "vertex_buffer.hxx"
+#include "color.hxx"
 
 class character
 {
@@ -16,7 +15,7 @@ private:
 	size_t count_sprite;
 	///count sprite inline
 protected:
-	virtual void animate() = 0;
+	//virtual void animate() = 0;
 public:
 	virtual ~character() = 0;
 	void set_ch_vbo(vbo* ch_vbo_);
@@ -57,6 +56,12 @@ size_t character::get_count_sprite() const
 	return count_sprite;
 }
 
+character::~character()
+{
+	delete ch_vbo;
+	delete ch_tex;
+}
+
 class hero : public character
 {
 public:
@@ -65,57 +70,56 @@ public:
 
 };
 
-character::~character()
-{
-	delete ch_vbo;
-	delete ch_tex;
-}
-
 hero::hero(om::texture* ch_tex_, float count)
 {
 	om::tri2 t_left;
 	om::tri2 t_right;
 
+	om::color color(1.0, 1.0, 1.0, 1.0);
+
 	float tex_step = 1.f / count;
 
-	t_right.v[0].pos.x = -1.0;
-	t_right.v[0].pos.y = -1.0;
+	t_right.v[0].pos.x = -0.5;
+	t_right.v[0].pos.y = -0.5;
 	t_right.v[0].uv.x = 0.0;
 	t_right.v[0].uv.y = 1.0 - tex_step;
+	t_right.v[0].c = color;
 
-	t_right.v[1].pos.x = 1.0;
-	t_right.v[1].pos.y = -1.0;
+	t_right.v[1].pos.x = 0.5;
+	t_right.v[1].pos.y = -0.5;
 	t_right.v[1].uv.x = tex_step;
 	t_right.v[1].uv.y = 1.0 - tex_step;
+	t_right.v[1].c = color;
 
-	t_right.v[2].pos.x = 1.0;
-	t_right.v[2].pos.y = 1.0;
+	t_right.v[2].pos.x = 0.5;
+	t_right.v[2].pos.y = 0.5;
 	t_right.v[2].uv.x = tex_step;
 	t_right.v[2].uv.y = 1.0;
+	t_right.v[2].c = color;
 
-	t_left.v[0].pos.x = -1.0;
-	t_left.v[0].pos.y = -1.0;
+	t_left.v[0].pos.x = 0.5;
+	t_left.v[0].pos.y = 0.5;
 	t_left.v[0].uv.x = tex_step;
 	t_left.v[0].uv.y = 1.0;
+	t_left.v[0].c = color;
 
-	t_left.v[1].pos.x = -1.0;
-	t_left.v[1].pos.y = 1.0;
+	t_left.v[1].pos.x = -0.5;
+	t_left.v[1].pos.y = 0.5;
 	t_left.v[1].uv.x = 0.0;
 	t_left.v[1].uv.y = 1.0;
+	t_left.v[1].c = color;
 
-	t_left.v[2].pos.x = -1.0;
-	t_left.v[2].pos.y = -1.0;
+	t_left.v[2].pos.x = -0.5;
+	t_left.v[2].pos.y = -0.5;
 	t_left.v[2].uv.x = 0.0;
 	t_left.v[2].uv.y = 1.0 - tex_step;
+	t_left.v[2].c = color;
 
-	om::tri2 triangles[2];
-	triangles[0] = t_left;
-	triangles[1] = t_right;
-	std::size_t size = 2;
-	vbo* v = new vertex_buffer_impl(triangles, size);
+	vbo* v = new vertex_buffer_impl(t_right, t_left);
 
 	set_ch_vbo(v);
 	set_character_texture(ch_tex_);
+	set_count_sprite(count);
 }
 
 

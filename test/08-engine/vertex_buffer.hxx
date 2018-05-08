@@ -28,6 +28,13 @@ public:
             triangles[i] = tri[i];
         }
     }
+
+    vertex_buffer_impl(om::tri2 t1, om::tri2 t2) : triangles(2)
+    {
+    	triangles[0] = t1;
+    	triangles[1] = t2;
+    }
+
     ~vertex_buffer_impl() final;
 
     const om::v2*      data() const final { return &triangles.data()->v[0]; }
