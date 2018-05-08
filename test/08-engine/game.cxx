@@ -8,9 +8,9 @@
 #include <memory>
 #include <string_view>
 
-#include "engine.hxx"
+#include "game_mode.hxx"
 
-class tanks_game final : public om::lila
+class tanks_game final : public lila
 {
 public:
     explicit tanks_game(om::engine& engine)
@@ -28,7 +28,7 @@ private:
     om::engine&  engine;
     om::texture* texture    = nullptr;
 
-    om::vbo*     vertex_buf = nullptr;
+    vbo*     vertex_buf = nullptr;
     om::sound*   snd        = nullptr;
 
     om::vec2               current_tank_pos       = om::vec2(0.f, 0.f);
@@ -36,7 +36,7 @@ private:
     static constexpr float pi                     = 3.1415926f;
 };
 
-std::unique_ptr<om::lila> om_tat_sat(om::engine& e)
+std::unique_ptr<lila> om_tat_sat(om::engine& e)
 {
     e.log << "creating main game object..." << std::endl;
     auto game = std::make_unique<tanks_game>(e);
@@ -148,9 +148,11 @@ void tanks_game::on_animate(float count_sprite)
 
 int initialize_and_start_main_loop()
 {
-	om::engine engine("");
+	om::window_size window_size(640, 480);
 
-    std::unique_ptr<om::lila> game = om_tat_sat(engine);
+	om::engine engine("", window_size);
+
+    std::unique_ptr<lila> game = om_tat_sat(engine);
 
     game->on_initialize();
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 #include <iosfwd>
 #include <memory>
@@ -8,6 +10,7 @@
 
 #include "e_math.hxx"
 #include "color.hxx"
+#include "vertex_buffer.hxx"
 
 #ifndef OM_DECLSPEC
 #define OM_DECLSPEC
@@ -74,16 +77,6 @@ public:
     virtual std::uint32_t get_height() const = 0;
 };
 
-class OM_DECLSPEC vbo
-{
-public:
-    virtual ~vbo();
-    virtual const v2* data() const = 0;
-    /// count of vertexes
-    virtual size_t size() const = 0;
-    virtual tri2 get_triangle(int index) const = 0;
-};
-
 class OM_DECLSPEC sound
 {
 public:
@@ -99,10 +92,33 @@ public:
     virtual void stop()             = 0;
 };
 
+struct window_size
+{
+	uint32_t window_width = 0;
+	uint32_t window_height = 0;
+	window_size() = default;
+	window_size(uint32_t w, uint32_t h) : window_width(w), window_height(h){}
+	window_size(window_size const& w)
+	{
+		window_width = w.window_width;
+		window_height = w.window_height;
+	}
+};
+
+window_size win_size;
+
+struct location
+{
+	uint32_t x;
+	uint32_t y;
+	location();
+	location(uint32_t x_, uint32_t y_);
+};
+
 class OM_DECLSPEC engine
 {
 public:
-    explicit engine(std::string_view config);
+    explicit engine(std::string_view config, om::window_size window_size);
     ~engine();
     engine& operator      =(engine&& other); // move assignment
     engine(const engine&) = delete;
@@ -133,31 +149,18 @@ public:
 
     void exit(int return_code);
 
+    //vec2 get_sdl2_coordinate(location const& loc);
+
     std::ostream& log;
 };
 
 
 ///struct location for screen
 ///x = 0, y = 0 top left angle screen
-struct location
-{
-	uint32_t x;
-	uint32_t y;
-	location();
-	location(uint32_t x_, uint32_t y_);
-	vec2 get_sdl2_coordinate();
-};
 
-struct OM_DECLSPEC lila
-{
-    virtual ~lila();
-    virtual void on_initialize()                                  = 0;
-    virtual void on_event(om::event&)                             = 0;
-    virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
-    virtual void on_render() const                                = 0;
-    virtual void on_animate(float count_sprite) = 0;
-};
 
 } // end namespace om
 
-extern std::unique_ptr<om::lila> om_tat_sat(om::engine&);
+
+
+

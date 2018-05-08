@@ -92,33 +92,6 @@ static void load_gl_func(const char* func_name, T& result)
 
 om::texture::~texture() {}
 
-om::vbo::~vbo() {}
-
-class vertex_buffer_impl final : public om::vbo
-{
-public:
-    vertex_buffer_impl(const om::tri2* tri, std::size_t n)
-        : triangles(n)
-    {
-        assert(tri != nullptr);
-        for (size_t i = 0; i < n; ++i)
-        {
-            triangles[i] = tri[i];
-        }
-    }
-    ~vertex_buffer_impl() final;
-
-    const om::v2*      data() const final { return &triangles.data()->v[0]; }
-    size_t size() const final { return triangles.size() * 3; }
-    om::tri2 get_triangle(int index) const
-    {
-    	return triangles[index];
-    }
-
-private:
-    std::vector<om::tri2> triangles;
-};
-
 static std::string_view get_sound_format_name(uint16_t format_value)
 {
     static const std::map<uint16_t, std::string_view> format = {
@@ -631,7 +604,7 @@ void om::engine::destroy_texture(texture* t)
     delete t;
 }
 
-om::vbo* om::engine::create_vbo(const om::tri2* triangles, std::size_t n)
+vbo* om::engine::create_vbo(const om::tri2* triangles, std::size_t n)
 {
     return new vertex_buffer_impl(triangles, n);
 }
@@ -856,9 +829,10 @@ void om::engine::exit(int return_code)
 
 static void audio_callback(void*, uint8_t*, int);
 
-om::engine::engine(std::string_view)
+om::engine::engine(std::string_view, om::window_size window_size)
     : log(std::cout)
 {
+	om::win_size = window_size;
     if (already_exist)
     {
         throw std::runtime_error("engine already exist");
@@ -915,7 +889,7 @@ om::engine::engine(std::string_view)
         }
 
         window = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED,
-                                  SDL_WINDOWPOS_CENTERED, 640, 480,
+                                  SDL_WINDOWPOS_CENTERED, window_size.window_width, window_size.window_height,
                                   ::SDL_WINDOW_OPENGL);
 
         if (window == nullptr)
@@ -1178,6 +1152,26 @@ om::engine::~engine()
     }
 }
 
+//om::vec2 om::engine::get_sdl2_coordinate(om::location const& loc)
+//{
+//	om::vec2 result;
+//
+//	float x0_pix = om::win_size.window_width / 2;
+//
+//	float y0_pix = om::win_size.window_width / 2;
+//
+//	if(loc.x <= x0_pix && loc.y >= y0_pix)
+//	{
+//
+//	}
+//
+//	result.x = 1 * loc.x / om::win_size.window_width;
+//
+//	result.y = 1 * loc.y / om::win_size.window_width;
+//
+//	return result;
+//}
+
 texture_gl_es20::texture_gl_es20(std::string_view path)
     : file_path(path)
 {
@@ -1282,13 +1276,9 @@ void audio_callback(void*, uint8_t* stream, int stream_size)
     }
 }
 
-om::lila::~lila() = default;
+
 
 om::location::location() : x(0), y(0) {}
 
 om::location::location(uint32_t x_, uint32_t y_) : x(x_), y(y_) {}
 
-om::vec2 om::location::get_sdl2_coordinate()
-{
-	return om::vec2();
-}
