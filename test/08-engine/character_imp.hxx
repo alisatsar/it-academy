@@ -15,7 +15,7 @@ private:
 	size_t count_sprite;
 	///count sprite inline
 public:
-	virtual void animate(float sec, float sec_now) = 0;
+	virtual void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now) = 0;
 public:
 	virtual ~character() = 0;
 	void set_ch_vbo(vbo* ch_vbo_);
@@ -67,7 +67,7 @@ class hero : public character
 public:
 	hero(om::texture* ch_tex_, float count);
 	~hero();
-	void animate(float sec, float sec_now);
+	void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now);
 
 };
 
@@ -123,36 +123,52 @@ hero::hero(om::texture* ch_tex_, float count)
 	set_count_sprite(count);
 }
 
-void hero::animate(float sec, float sec_now)
+void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now)
 {
-	static float a = 0.f;
-	static float b = 0.f;
+	if(last_frame > get_count_sprite())
+	{
+		std::cout << "Error: last can't be more than all sprite in texture" << std::endl;
+		return;
+	}
 
-	float tex_step = 1.f / get_count_sprite();
+	//static size_t counter_of_frame = last_frame - first_frame;
+	static size_t counter = first_frame;
+	static size_t priv_counter = first_frame;
 
-	static float left = 0.f;
-	static float right = tex_step;
+	static float cur_time = 0.f;
+	static float last_time = 0.f;
+
+	static float tex_step = 1.f / get_count_sprite();
+
+	static float left = tex_step * first_frame;
+	static float right = left + tex_step;
+
+	//static float top = 0.f;
+	//static float botton = 0.f;
 
 	vbo* v = get_character_vbo();
 
-	if((a - b) >= sec)
+	if((cur_time - last_time) >= delta_sec)
 	{
-		coun
-		if(left < tex_step * (get_count_sprite() - 1))
+		if(counter == last_frame + 1)
+		{
+			counter = first_frame;
+			priv_counter = first_frame;
+		}
+		++counter;
+	}
+
+	if(priv_counter < counter)
+	{
+		if(counter <= last_frame)
 		{
 			left += tex_step;
-		}
-		else
-		{
-			left = 0.0;
-		}
-		if(right < 1.f)
-		{
 			right += tex_step;
 		}
-		else
+		else if(counter == last_frame + 1)
 		{
-			right = tex_step;
+			left = tex_step * first_frame;
+			right = left + tex_step;
 		}
 
 		v->triangles[0].v[0].uv.x = left;
@@ -163,10 +179,12 @@ void hero::animate(float sec, float sec_now)
 		v->triangles[1].v[1].uv.x = left;
 		v->triangles[1].v[2].uv.x = left;
 
-		b = a;
-	}
+		last_time = cur_time;
 
-	a = sec_now;
+		++priv_counter;
+		std::cout << sec_now << std::endl;
+	}
+	cur_time = sec_now;
 }
 
 hero::~hero()
