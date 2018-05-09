@@ -146,7 +146,7 @@ void tanks_game::on_render() const
 
 void tanks_game::on_animate()
 {
-	he->animate(0, 5, 1, engine.get_time_from_init());
+	he->animate(0, 9, 0.2, engine.get_time_from_init());
 	on_render();
 
 }

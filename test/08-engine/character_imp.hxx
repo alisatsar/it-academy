@@ -125,63 +125,64 @@ hero::hero(om::texture* ch_tex_, float count)
 
 void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now)
 {
-	if(last_frame > get_count_sprite())
+	const size_t count_sprite_line = get_count_sprite();
+
+	const size_t all_sprite = count_sprite_line * count_sprite_line;
+
+	if(last_frame > all_sprite - 1)
 	{
 		std::cout << "Error: last can't be more than all sprite in texture" << std::endl;
 		return;
 	}
 
 	//static size_t counter_of_frame = last_frame - first_frame;
-	static size_t counter = first_frame;
-	static size_t priv_counter = first_frame;
+	static size_t posit = first_frame;
+	static size_t priv_posit = first_frame;
+
+	size_t current_row = posit / count_sprite_line;
 
 	static float cur_time = 0.f;
 	static float last_time = 0.f;
 
-	static float tex_step = 1.f / get_count_sprite();
+	const float tex_step = 1.f / count_sprite_line;
 
-	static float left = tex_step * first_frame;
-	static float right = left + tex_step;
+	float left = posit * tex_step - current_row;
+	float right = left + tex_step;
 
-	//static float top = 0.f;
-	//static float botton = 0.f;
+	float top = 1.f - tex_step * current_row;
+	float botton = top - tex_step;
 
 	vbo* v = get_character_vbo();
 
 	if((cur_time - last_time) >= delta_sec)
 	{
-		if(counter == last_frame + 1)
+		if(posit == last_frame + 1)
 		{
-			counter = first_frame;
-			priv_counter = first_frame;
+			posit = first_frame;
+			priv_posit = first_frame;
 		}
-		++counter;
+		++posit;
 	}
 
-	if(priv_counter < counter)
+	if(priv_posit < posit && posit <= last_frame)
 	{
-		if(counter <= last_frame)
-		{
-			left += tex_step;
-			right += tex_step;
-		}
-		else if(counter == last_frame + 1)
-		{
-			left = tex_step * first_frame;
-			right = left + tex_step;
-		}
-
 		v->triangles[0].v[0].uv.x = left;
+		v->triangles[0].v[0].uv.y = botton;
 		v->triangles[0].v[1].uv.x = right;
+		v->triangles[0].v[1].uv.y = botton;
 		v->triangles[0].v[2].uv.x = right;
+		v->triangles[0].v[2].uv.y = top;
 
 		v->triangles[1].v[0].uv.x = right;
+		v->triangles[1].v[0].uv.y = top;
 		v->triangles[1].v[1].uv.x = left;
+		v->triangles[1].v[1].uv.y = top;
 		v->triangles[1].v[2].uv.x = left;
+		v->triangles[1].v[2].uv.y = botton;
 
 		last_time = cur_time;
 
-		++priv_counter;
+		++priv_posit;
 		std::cout << sec_now << std::endl;
 	}
 	cur_time = sec_now;
