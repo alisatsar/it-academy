@@ -7,19 +7,9 @@
 class vbo
 {
 public:
-    virtual ~vbo();
-    virtual const om::v2* data() const = 0;
-    /// count of vertexes
-    virtual size_t size() const = 0;
-    virtual om::tri2 get_triangle(int index) const = 0;
-};
-
-vbo::~vbo() {}
-
-class vertex_buffer_impl final : public vbo
-{
+    std::vector<om::tri2> triangles;
 public:
-    vertex_buffer_impl(const om::tri2* tri, std::size_t n)
+    vbo(const om::tri2* tri, std::size_t n)
         : triangles(n)
     {
         assert(tri != nullptr);
@@ -29,21 +19,18 @@ public:
         }
     }
 
-    vertex_buffer_impl(om::tri2 t1, om::tri2 t2) : triangles(2)
+    vbo(om::tri2 t1, om::tri2 t2) : triangles(2)
     {
     	triangles[0] = t1;
     	triangles[1] = t2;
     }
 
-    ~vertex_buffer_impl() final;
+    ~vbo(){};
 
-    const om::v2*      data() const final { return &triangles.data()->v[0]; }
-    size_t size() const final { return triangles.size() * 3; }
+    const om::v2*      data() const  { return &triangles.data()->v[0]; }
+    size_t size() const  { return triangles.size() * 3; }
     om::tri2 get_triangle(int index) const
     {
     	return triangles[index];
     }
-
-private:
-    std::vector<om::tri2> triangles;
 };

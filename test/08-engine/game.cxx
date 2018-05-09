@@ -139,15 +139,16 @@ void tanks_game::on_render() const
     //om::mat2x3 rot    = om::mat2x3::rotation(current_tank_direction);
     //om::mat2x3 m      = rot * move * aspect;
 
+	om::mat2x3 m;
+	engine.render(*he->get_character_vbo(), he->get_character_texture(), m);
     //engine.render(*vertex_buf, texture, m);
 }
 
 void tanks_game::on_animate()
 {
-	om::mat2x3 m;
+	he->animate(0.2, engine.get_time_from_init());
+	on_render();
 
-	engine.render(*he->get_character_vbo(), he->get_character_texture(), m);
-	//engine.start_animate(*vertex_buf, texture, count_sprite, 0.5, m);
 }
 
 int initialize_and_start_main_loop()

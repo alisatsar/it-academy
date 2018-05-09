@@ -261,7 +261,6 @@ sound_buffer_impl::~sound_buffer_impl()
     length = 0;
 }
 
-vertex_buffer_impl::~vertex_buffer_impl() {}
 
 class texture_gl_es20 final : public om::texture
 {
@@ -606,7 +605,7 @@ void om::engine::destroy_texture(texture* t)
 
 vbo* om::engine::create_vbo(const om::tri2* triangles, std::size_t n)
 {
-    return new vertex_buffer_impl(triangles, n);
+    return new vbo(triangles, n);
 }
 void om::engine::destroy_vbo(vbo* buffer)
 {
@@ -737,7 +736,8 @@ void om::engine::render(const vbo& buff, texture* tex, const mat2x3& m)
     shader03->set_uniform("s_texture", texture);
     shader03->set_uniform("u_matrix", m);
 
-    const v2* t = buff.data();
+
+    const om::v2* t = buff.data();
     // positions
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(v2), &t->pos);
     OM_GL_CHECK();
@@ -763,55 +763,6 @@ void om::engine::render(const vbo& buff, texture* tex, const mat2x3& m)
     OM_GL_CHECK();
     glDisableVertexAttribArray(2);
     OM_GL_CHECK();
-}
-
-void om::engine::start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3& m)
-{
-	static float a = 0.f;
-	static float b = 0.f;
-
-	float size = 1.f / count_sprite;
-
-	static float left = 0.f;
-	static float right = size;
-
-	static tri2 t1 = buff.get_triangle(0);
-	static tri2 t2 = buff.get_triangle(1);
-
-	if((a - b) >= sec)
-	{
-		if(left < size * 6)
-		{
-			left += size;
-		}
-		else
-		{
-			left = 0.0;
-		}
-		if(right < 1.f)
-		{
-			right += size;
-		}
-		else
-		{
-			right = size;
-		}
-
-		t1.v[0].uv.x = left;
-		t1.v[1].uv.x = right;
-		t1.v[2].uv.x = right;
-
-		t2.v[0].uv.x = right;
-		t2.v[1].uv.x = left;
-		t2.v[2].uv.x = left;
-
-		b = a;
-	}
-
-	a = get_time_from_init();
-
-	render(t1, tex, m);
-	render(t2, tex, m);
 }
 
 void om::engine::swap_buffers()

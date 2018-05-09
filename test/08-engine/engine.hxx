@@ -143,7 +143,6 @@ public:
     void render(const tri2&, texture*);
     void render(const tri2&, texture*, const mat2x3& m);
     void render(const vbo&, texture*, const mat2x3&);
-    void start_animate(const vbo& buff, texture* tex, float count_sprite, float sec, const mat2x3&);
     void swap_buffers();
     void uninitialize();
 

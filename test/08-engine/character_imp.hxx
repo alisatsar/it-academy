@@ -14,8 +14,8 @@ private:
 	om::texture* ch_tex;
 	size_t count_sprite;
 	///count sprite inline
-protected:
-	//virtual void animate() = 0;
+public:
+	virtual void animate(float sec, float sec_now) = 0;
 public:
 	virtual ~character() = 0;
 	void set_ch_vbo(vbo* ch_vbo_);
@@ -67,6 +67,7 @@ class hero : public character
 public:
 	hero(om::texture* ch_tex_, float count);
 	~hero();
+	void animate(float sec, float sec_now);
 
 };
 
@@ -115,13 +116,58 @@ hero::hero(om::texture* ch_tex_, float count)
 	t_left.v[2].uv.y = 1.0 - tex_step;
 	t_left.v[2].c = color;
 
-	vbo* v = new vertex_buffer_impl(t_right, t_left);
+	vbo* v = new vbo(t_right, t_left);
 
 	set_ch_vbo(v);
 	set_character_texture(ch_tex_);
 	set_count_sprite(count);
 }
 
+void hero::animate(float sec, float sec_now)
+{
+	static float a = 0.f;
+	static float b = 0.f;
+
+	float tex_step = 1.f / get_count_sprite();
+
+	static float left = 0.f;
+	static float right = tex_step;
+
+	vbo* v = get_character_vbo();
+
+	if((a - b) >= sec)
+	{
+		coun
+		if(left < tex_step * (get_count_sprite() - 1))
+		{
+			left += tex_step;
+		}
+		else
+		{
+			left = 0.0;
+		}
+		if(right < 1.f)
+		{
+			right += tex_step;
+		}
+		else
+		{
+			right = tex_step;
+		}
+
+		v->triangles[0].v[0].uv.x = left;
+		v->triangles[0].v[1].uv.x = right;
+		v->triangles[0].v[2].uv.x = right;
+
+		v->triangles[1].v[0].uv.x = right;
+		v->triangles[1].v[1].uv.x = left;
+		v->triangles[1].v[2].uv.x = left;
+
+		b = a;
+	}
+
+	a = sec_now;
+}
 
 hero::~hero()
 {
