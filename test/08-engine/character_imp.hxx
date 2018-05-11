@@ -80,38 +80,38 @@ hero::hero(om::texture* ch_tex_, float count)
 
 	float tex_step = 1.f / count;
 
-	t_right.v[0].pos.x = -0.5;
-	t_right.v[0].pos.y = -0.5;
+	t_right.v[0].pos.x = -1.f;
+	t_right.v[0].pos.y = -1.f;
 	t_right.v[0].uv.x = 0.0;
 	t_right.v[0].uv.y = 1.0 - tex_step;
 	t_right.v[0].c = color;
 
-	t_right.v[1].pos.x = 0.5;
-	t_right.v[1].pos.y = -0.5;
+	t_right.v[1].pos.x = 1.f;
+	t_right.v[1].pos.y = -1.f;
 	t_right.v[1].uv.x = tex_step;
 	t_right.v[1].uv.y = 1.0 - tex_step;
 	t_right.v[1].c = color;
 
-	t_right.v[2].pos.x = 0.5;
-	t_right.v[2].pos.y = 0.5;
+	t_right.v[2].pos.x = 1.f;
+	t_right.v[2].pos.y = 1.f;
 	t_right.v[2].uv.x = tex_step;
 	t_right.v[2].uv.y = 1.0;
 	t_right.v[2].c = color;
 
-	t_left.v[0].pos.x = 0.5;
-	t_left.v[0].pos.y = 0.5;
+	t_left.v[0].pos.x = 1.f;
+	t_left.v[0].pos.y = 1.f;
 	t_left.v[0].uv.x = tex_step;
 	t_left.v[0].uv.y = 1.0;
 	t_left.v[0].c = color;
 
-	t_left.v[1].pos.x = -0.5;
-	t_left.v[1].pos.y = 0.5;
+	t_left.v[1].pos.x = -1.f;
+	t_left.v[1].pos.y = 1.f;
 	t_left.v[1].uv.x = 0.0;
 	t_left.v[1].uv.y = 1.0;
 	t_left.v[1].c = color;
 
-	t_left.v[2].pos.x = -0.5;
-	t_left.v[2].pos.y = -0.5;
+	t_left.v[2].pos.x = -1.f;
+	t_left.v[2].pos.y = -1.f;
 	t_left.v[2].uv.x = 0.0;
 	t_left.v[2].uv.y = 1.0 - tex_step;
 	t_left.v[2].c = color;
@@ -156,15 +156,18 @@ void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float
 
 	if((cur_time - last_time) >= delta_sec)
 	{
-		if(posit == last_frame + 1)
+		if(posit == last_frame)
 		{
 			posit = first_frame;
 			priv_posit = first_frame;
 		}
-		++posit;
+		else
+		{
+			++posit;
+		}
 	}
 
-	if(priv_posit < posit && posit <= last_frame)
+	if(priv_posit <= posit)
 	{
 		v->triangles[0].v[0].uv.x = left;
 		v->triangles[0].v[0].uv.y = botton;
