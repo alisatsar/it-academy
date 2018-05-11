@@ -1,18 +1,17 @@
 #pragma once
 
+#include "actor.hxx"
+
 #include "e_math.hxx"
 #include "color.hxx"
-#include "engine.hxx"
 #include "vertex_buffer.hxx"
 #include "color.hxx"
 
-class character
+class character : public actor
 {
 private:
-	uint32_t handler;
-	vbo* ch_vbo;
-	om::texture* ch_tex;
 	size_t count_sprite;
+	size_t first_position;
 	///count sprite inline
 public:
 	virtual void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now) = 0;
@@ -24,26 +23,28 @@ public:
 	om::texture* get_character_texture() const;
 	void set_count_sprite(size_t count_sp);
 	size_t get_count_sprite() const;
+	void set_first_position(size_t pos) { first_position = pos; }
+	size_t get_first_position() const { return first_position; }
 };
 
 void character::set_ch_vbo(vbo* ch_vbo_)
 {
-	ch_vbo = ch_vbo_;
+	set_actor_vbo(ch_vbo_);
 }
 
 vbo* character::get_character_vbo() const
 {
-	return ch_vbo;
+	return get_actor_vbo();
 }
 
 void character::set_character_texture(om::texture* tex)
 {
-	ch_tex = tex;
+	set_actor_texture(tex);
 }
 
 om::texture* character::get_character_texture() const
 {
-	return ch_tex;
+	return get_actor_texture();
 }
 
 void character::set_count_sprite(size_t count_sp)
@@ -58,8 +59,6 @@ size_t character::get_count_sprite() const
 
 character::~character()
 {
-	delete ch_vbo;
-	delete ch_tex;
 }
 
 class hero : public character
@@ -68,7 +67,10 @@ public:
 	hero(om::texture* ch_tex_, float count);
 	~hero();
 	void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now);
-
+	void change_position(size_t p)
+	{
+		set_first_position(p);
+	}
 };
 
 hero::hero(om::texture* ch_tex_, float count)
@@ -135,7 +137,6 @@ void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float
 		return;
 	}
 
-	//static size_t counter_of_frame = last_frame - first_frame;
 	static size_t posit = first_frame;
 	static size_t priv_posit = first_frame;
 
@@ -190,6 +191,7 @@ void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float
 	}
 	cur_time = sec_now;
 }
+
 
 hero::~hero()
 {

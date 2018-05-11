@@ -12,9 +12,13 @@
 #include "color.hxx"
 #include "vertex_buffer.hxx"
 
+void delay(int sec);
+
+
 #ifndef OM_DECLSPEC
 #define OM_DECLSPEC
 #endif
+
 
 namespace om
 {
