@@ -14,7 +14,8 @@ private:
 	size_t first_position;
 	///count sprite inline
 public:
-	virtual void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now) = 0;
+	virtual size_t animate(size_t first_frame, size_t count_frame,
+			size_t last_frame, float delta_sec, float sec_now) = 0;
 public:
 	virtual ~character() = 0;
 	void set_ch_vbo(vbo* ch_vbo_);
@@ -66,7 +67,10 @@ class hero : public character
 public:
 	hero(om::texture* ch_tex_, float count);
 	~hero();
-	void animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now);
+	size_t animate(size_t first_frame, size_t last_frame,  size_t count_frame,
+			float delta_sec, float sec_now);
+
+	void change_tex_coord(size_t frame);
 	void change_position(size_t p)
 	{
 		set_first_position(p);
@@ -125,29 +129,19 @@ hero::hero(om::texture* ch_tex_, float count)
 	set_count_sprite(count);
 }
 
-void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float sec_now)
+size_t hero::animate(size_t first_frame, size_t last_frame, size_t count_frame,
+		float delta_sec, float sec_now)
 {
 	const size_t count_sprite_line = get_count_sprite();
 
-	const size_t all_sprite = count_sprite_line * count_sprite_line;
-
-	if(last_frame > all_sprite - 1)
-	{
-		std::cout << "Error: last can't be more than all sprite in texture" << std::endl;
-		return;
-	}
-
-	static size_t posit = first_frame;
-	static size_t priv_posit = first_frame;
-
-	size_t current_row = posit / count_sprite_line;
+	size_t current_row = first_frame / count_sprite_line;
 
 	static float cur_time = 0.f;
 	static float last_time = 0.f;
 
 	const float tex_step = 1.f / count_sprite_line;
 
-	float left = posit * tex_step - current_row;
+	float left = first_frame * tex_step - current_row;
 	float right = left + tex_step;
 
 	float top = 1.f - tex_step * current_row;
@@ -157,41 +151,35 @@ void hero::animate(size_t first_frame, size_t last_frame, float delta_sec, float
 
 	if((cur_time - last_time) >= delta_sec)
 	{
-		if(posit == last_frame)
+		if(first_frame <= last_frame)
 		{
-			posit = first_frame;
-			priv_posit = first_frame;
-		}
-		else
-		{
-			++posit;
+			v->triangles[0].v[0].uv.x = left;
+			v->triangles[0].v[0].uv.y = botton;
+			v->triangles[0].v[1].uv.x = right;
+			v->triangles[0].v[1].uv.y = botton;
+			v->triangles[0].v[2].uv.x = right;
+			v->triangles[0].v[2].uv.y = top;
+
+			v->triangles[1].v[0].uv.x = right;
+			v->triangles[1].v[0].uv.y = top;
+			v->triangles[1].v[1].uv.x = left;
+			v->triangles[1].v[1].uv.y = top;
+			v->triangles[1].v[2].uv.x = left;
+			v->triangles[1].v[2].uv.y = botton;
+
+			++first_frame;
+			last_time = cur_time;
 		}
 	}
-
-	if(priv_posit <= posit)
+	if(first_frame == last_frame + 1)
 	{
-		v->triangles[0].v[0].uv.x = left;
-		v->triangles[0].v[0].uv.y = botton;
-		v->triangles[0].v[1].uv.x = right;
-		v->triangles[0].v[1].uv.y = botton;
-		v->triangles[0].v[2].uv.x = right;
-		v->triangles[0].v[2].uv.y = top;
-
-		v->triangles[1].v[0].uv.x = right;
-		v->triangles[1].v[0].uv.y = top;
-		v->triangles[1].v[1].uv.x = left;
-		v->triangles[1].v[1].uv.y = top;
-		v->triangles[1].v[2].uv.x = left;
-		v->triangles[1].v[2].uv.y = botton;
-
-		last_time = cur_time;
-
-		++priv_posit;
-		std::cout << sec_now << std::endl;
+		first_frame = last_frame - count_frame;
 	}
-	cur_time = sec_now;
-}
 
+	cur_time = sec_now;
+
+	return first_frame;
+}
 
 hero::~hero()
 {

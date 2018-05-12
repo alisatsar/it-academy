@@ -11,8 +11,6 @@ struct lila
     virtual void on_event(om::event&)                             = 0;
     virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
     virtual void on_render() const                                = 0;
-    virtual void on_animate() = 0;
-    virtual void clear_animate() = 0;
 };
 
 extern std::unique_ptr<lila> om_tat_sat(om::engine&);
@@ -29,7 +27,10 @@ private:
 	character* he;
 
 	pawn* backgr;
-	uint32_t state;
+
+	size_t stay_frame = 0;
+	size_t run_frame = 6;
+	size_t jump_frame = 10;
 
 	om::vec2 position = om::vec2(-0.7, -0.55);
 public:
@@ -42,8 +43,6 @@ public:
     void on_event(om::event&) final;
     void on_update(std::chrono::milliseconds frame_delta) final;
     void on_render() const final;
-    void on_animate() final;
-    void clear_animate() final;
 };
 
 std::unique_ptr<lila> om_tat_sat(om::engine& e)
@@ -110,17 +109,18 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	}
 	else if (engine.is_key_down(om::keys::right))
 	{
-
+		run_frame = he->animate(run_frame, 9, 3, 0.2, engine.get_time_from_init());
+		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))
 	{
-		//he->set_first_position(0);
-		//he->animate(0, 5, 0.2, engine.get_time_from_init());
+		jump_frame = he->animate(jump_frame, 16, 6, 0.2, engine.get_time_from_init());
+		on_render();
 	}
-	else if (engine.is_key_down(om::keys::down))
+	else
 	{
-		//he->set_first_position(6);
-		//he->animate(6, 9, 0.2, engine.get_time_from_init());
+		stay_frame = he->animate(stay_frame, 5, 5, 0.2, engine.get_time_from_init());
+		on_render();
 	}
 }
 
@@ -134,14 +134,4 @@ void girl_game::on_render() const
 	engine.render(*he->get_character_vbo(), he->get_character_texture(), m);
 }
 
-void girl_game::on_animate()
-{
-	he->animate(6, 9, 0.2, engine.get_time_from_init());
-	on_render();
-}
-
-void girl_game::clear_animate()
-{
-	he->animate(0, 5, 0.2, engine.get_time_from_init());
-}
 

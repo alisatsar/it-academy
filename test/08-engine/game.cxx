@@ -30,7 +30,6 @@ int initialize_and_start_main_loop()
         }
 
         game->on_update(std::chrono::milliseconds(1));
-        game->on_animate();
 
         engine.swap_buffers();
     }
