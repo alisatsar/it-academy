@@ -138,6 +138,13 @@ class sound_buffer_impl;
 
 std::vector<sound_buffer_impl*> sounds;
 
+float tex_px_x;
+float tex_px_y;
+float pos_x0;
+float pos_y0;
+float pos_px_x;
+float pos_px_y;
+
 class sound_buffer_impl final : public om::sound
 {
 public:
@@ -789,6 +796,14 @@ om::engine::engine(std::string_view, om::window_size window_size)
         throw std::runtime_error("engine already exist");
     }
 
+    tex_px_x = 1.0f / win_size.window_width;
+    tex_px_y = 1.0f / win_size.window_height;
+
+    pos_x0 = win_size.window_width / 2.0f;
+    pos_y0 = win_size.window_height / 2.0f;
+    pos_px_x = 1.0f / (win_size.window_width / 2.0f);
+    pos_px_y = 1.0f / (win_size.window_height / 2.0f);
+
     {
         using namespace std;
 
@@ -1227,9 +1242,38 @@ void audio_callback(void*, uint8_t* stream, int stream_size)
     }
 }
 
+om::vec2 om::engine::get_tex_coor(float px_x, float px_y)
+{
+	om::vec2 result;
+	result.x = tex_px_x * px_x;
+	result.y = tex_px_y * px_y;
+	return result;
+}
 
+om::vec2 om::engine::get_pos_coor(float px_x, float px_y)
+{
+	om::vec2 result;
 
-om::location::location() : x(0), y(0) {}
+	result.x = (px_x - pos_x0) * pos_px_x;
+//	if(px_x < pos_x0)
+//	{
+//		result.x = -result.x;
+//	}
+	if(px_x == pos_x0)
+	{
+		result.x = 0.0f;
+	}
 
-om::location::location(uint32_t x_, uint32_t y_) : x(x_), y(y_) {}
+	result.y = (px_y - pos_y0) * pos_px_y;
+//	if(px_y < pos_y0)
+//	{
+//		result.y = -result.y;
+//	}
+	if(px_y == pos_y0)
+	{
+		result.y = 0.0f;
+	}
+
+	return result;
+}
 

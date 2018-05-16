@@ -44,7 +44,7 @@ private:
 
 	pawn* backgr = nullptr;
 
-	om::vec2 position = om::vec2(-0.7, -0.55);
+	om::vec2 position;
 	hero_state hero_st;
 	hero_state_render hero_st_ren = stay;
 public:
@@ -70,6 +70,8 @@ std::unique_ptr<lila> om_tat_sat(om::engine& e)
 
 void girl_game::on_initialize()
 {
+	om::vec2 pos = engine.get_pos_coor(50, 100);
+	position = pos;
     om::texture* tex = engine.create_texture("girl.png");
     if (nullptr == tex)
     {
@@ -159,7 +161,7 @@ void girl_game::on_render()
 
 	switch (hero_st_ren){
 	case stay:
-		position.y = -0.55f;
+		position.y = engine.get_pos_coor(50, 100).y;
 		break;
 	case run:
 		position.y = -0.55f;

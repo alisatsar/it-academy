@@ -6,12 +6,14 @@
 #include "color.hxx"
 #include "vertex_buffer.hxx"
 #include "color.hxx"
+#include "collision_box.hxx"
 
 class character : public actor
 {
 private:
 	size_t count_sprite;
 	size_t first_position;
+	collision_box col_box;
 	///count sprite inline
 public:
 	virtual uint16_t animate(uint16_t first_frame, uint16_t count_frame,
@@ -24,8 +26,8 @@ public:
 	om::texture* get_character_texture() const;
 	void set_count_sprite(size_t count_sp);
 	size_t get_count_sprite() const;
-	void set_first_position(size_t pos) { first_position = pos; }
-	size_t get_first_position() const { return first_position; }
+	void set_collision_box(om::vec2 v0, om::vec2 v1);
+	collision_box get_collision_box() const;
 };
 
 void character::set_ch_vbo(vbo* ch_vbo_)
@@ -56,6 +58,17 @@ void character::set_count_sprite(size_t count_sp)
 size_t character::get_count_sprite() const
 {
 	return count_sprite;
+}
+
+void character::set_collision_box(om::vec2 v0, om::vec2 v1)
+{
+	col_box.v0 = v0;
+	col_box.v1 = v1;
+}
+
+collision_box character::get_collision_box() const
+{
+	return col_box;
 }
 
 character::~character()

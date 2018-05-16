@@ -19,7 +19,6 @@ void delay(int sec);
 #define OM_DECLSPEC
 #endif
 
-
 namespace om
 {
 
@@ -111,14 +110,6 @@ struct window_size
 
 window_size win_size;
 
-struct location
-{
-	uint32_t x;
-	uint32_t y;
-	location();
-	location(uint32_t x_, uint32_t y_);
-};
-
 class OM_DECLSPEC engine
 {
 public:
@@ -150,16 +141,14 @@ public:
     void swap_buffers();
     void uninitialize();
 
-    void exit(int return_code);
+    om::vec2 get_tex_coor(float px_x, float px_y);
+    om::vec2 get_pos_coor(float px_x, float px_y);
 
-    //vec2 get_sdl2_coordinate(location const& loc);
+    void exit(int return_code);
 
     std::ostream& log;
 };
 
-
-///struct location for screen
-///x = 0, y = 0 top left angle screen
 
 
 } // end namespace om
