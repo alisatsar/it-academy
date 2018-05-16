@@ -14,8 +14,8 @@ private:
 	size_t first_position;
 	///count sprite inline
 public:
-	virtual size_t animate(size_t first_frame, size_t count_frame,
-			size_t last_frame, float delta_sec, float sec_now) = 0;
+	virtual uint16_t animate(uint16_t first_frame, uint16_t count_frame,
+			uint16_t last_frame, float delta_sec, float sec_now) = 0;
 public:
 	virtual ~character() = 0;
 	void set_ch_vbo(vbo* ch_vbo_);
@@ -67,14 +67,8 @@ class hero : public character
 public:
 	hero(om::texture* ch_tex_, float count);
 	~hero();
-	size_t animate(size_t first_frame, size_t last_frame,  size_t count_frame,
+	uint16_t animate(uint16_t first_frame, uint16_t last_frame,  uint16_t count_frame,
 			float delta_sec, float sec_now);
-
-	void change_tex_coord(size_t frame);
-	void change_position(size_t p)
-	{
-		set_first_position(p);
-	}
 };
 
 hero::hero(om::texture* ch_tex_, float count)
@@ -129,12 +123,12 @@ hero::hero(om::texture* ch_tex_, float count)
 	set_count_sprite(count);
 }
 
-size_t hero::animate(size_t first_frame, size_t last_frame, size_t count_frame,
+uint16_t hero::animate(uint16_t first_frame, uint16_t last_frame, uint16_t count_frame,
 		float delta_sec, float sec_now)
 {
 	const size_t count_sprite_line = get_count_sprite();
 
-	size_t current_row = first_frame / count_sprite_line;
+	uint16_t current_row = first_frame / count_sprite_line;
 
 	static float cur_time = 0.f;
 	static float last_time = 0.f;

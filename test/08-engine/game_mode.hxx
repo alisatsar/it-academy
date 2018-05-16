@@ -10,12 +10,28 @@ struct lila
     virtual void on_initialize()                 			      = 0;
     virtual void on_event(om::event&)                             = 0;
     virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
-    virtual void on_render() const                                = 0;
+    virtual void on_render()   = 0;
 };
 
 extern std::unique_ptr<lila> om_tat_sat(om::engine&);
 
 lila::~lila() = default;
+
+struct hero_state
+{
+	uint16_t stay_frame = 0;
+	uint16_t run_frame = 6;
+	uint16_t jump_frame = 10;
+	uint16_t trundle_frame = 17;
+};
+
+enum hero_state_render
+{
+	stay,
+	run,
+	jump,
+	trundle
+};
 
 class girl_game final : public lila
 {
@@ -24,16 +40,15 @@ private:
 	std::vector<om::texture*> all_textures;
 	om::sound*   snd        = nullptr;
 
-	character* he;
+	character* he = nullptr;
 
-	pawn* backgr;
-
-	size_t stay_frame = 0;
-	size_t run_frame = 6;
-	size_t jump_frame = 10;
+	pawn* backgr = nullptr;
 
 	om::vec2 position = om::vec2(-0.7, -0.55);
+	hero_state hero_st;
+	hero_state_render hero_st_ren = stay;
 public:
+
     explicit girl_game(om::engine& engine)
         : engine(engine)
     {
@@ -42,7 +57,7 @@ public:
     void on_initialize() final;
     void on_event(om::event&) final;
     void on_update(std::chrono::milliseconds frame_delta) final;
-    void on_render() const final;
+    void on_render() final;
 };
 
 std::unique_ptr<lila> om_tat_sat(om::engine& e)
@@ -103,35 +118,84 @@ void girl_game::on_event(om::event& event)
 
 void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 {
+
 	if (engine.is_key_down(om::keys::left))
 	{
 
+		on_render();
 	}
 	else if (engine.is_key_down(om::keys::right))
 	{
-		run_frame = he->animate(run_frame, 9, 3, 0.2, engine.get_time_from_init());
+		hero_st_ren = run;
+		hero_st.run_frame = he->animate(hero_st.run_frame, 9, 3, 0.1, engine.get_time_from_init());
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))
 	{
-		jump_frame = he->animate(jump_frame, 16, 6, 0.2, engine.get_time_from_init());
+		hero_st_ren = jump;
+		hero_st.jump_frame = he->animate(hero_st.jump_frame, 16, 6, 0.1, engine.get_time_from_init());
+		on_render();
+	}
+	else if (engine.is_key_down(om::keys::down))
+	{
+		hero_st_ren = trundle;
+		hero_st.trundle_frame = he->animate(hero_st.trundle_frame, 21, 4, 0.1, engine.get_time_from_init());
 		on_render();
 	}
 	else
 	{
-		stay_frame = he->animate(stay_frame, 5, 5, 0.2, engine.get_time_from_init());
+		hero_st_ren = stay;
+		hero_st.run_frame = 6;
+		hero_st.jump_frame = 10;
+		hero_st.stay_frame = he->animate(hero_st.stay_frame, 5, 5, 0.2, engine.get_time_from_init());
 		on_render();
 	}
 }
 
-void girl_game::on_render() const
+void girl_game::on_render()
 {
 	om::mat2x3 scale1 = om::mat2x3::scale(1);
 	engine.render(*backgr->get_pawn_vbo(), backgr->get_pawn_texture(), scale1);
+
+	switch (hero_st_ren){
+	case stay:
+		position.y = -0.55f;
+		break;
+	case run:
+		position.y = -0.55f;
+		position.x += 0.01f;
+		break;
+	case jump:
+		position.x += 0.02f;
+		if(hero_st.jump_frame >= 11 && hero_st.jump_frame <= 13)
+		{
+			position.y += 0.02f;
+		}
+		else if(hero_st.jump_frame >= 14 && hero_st.jump_frame <= 16)
+		{
+			position.y -= 0.02f;
+		}
+		break;
+	case trundle:
+		if(hero_st.trundle_frame == 17 || hero_st.trundle_frame == 21)
+		{
+			position.x += 0.0f;
+		}
+		else
+		{
+			position.x += 0.02f;
+		}
+		position.y = -0.55f;
+		break;
+	default:
+		break;
+	}
+
 	om::mat2x3 scale = om::mat2x3::scale(0.2);
 	om::mat2x3 move = om::mat2x3::move(position);
 	om::mat2x3 m = scale * move;
 	engine.render(*he->get_character_vbo(), he->get_character_texture(), m);
 }
+
 
 
