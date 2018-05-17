@@ -28,9 +28,8 @@ private:
 
 	pawn* backgr = nullptr;
 
-	rock* roc = nullptr;
-
 	hero_controller* hero_contr = nullptr;
+	rock_controller* r_controller = nullptr;
 	float x;
 	hero_state hero_st;
 	hero_state_render hero_st_ren = stay;
@@ -58,8 +57,7 @@ std::unique_ptr<lila> om_tat_sat(om::engine& e)
 
 void girl_game::on_initialize()
 {
-	om::vec2 pos = engine.get_pos_coor(50, 100);
-    om::texture* tex = engine.create_texture("girl.png");
+	om::texture* tex = engine.create_texture("girl.png");
     if (nullptr == tex)
     {
         engine.log << "failed load texture\n";
@@ -68,15 +66,25 @@ void girl_game::on_initialize()
 
     character* he = new hero(tex, 7, 7, 90);
 
+    float x_px = 100;
+    float y_px = 100;
+    om::vec2 pos = engine.get_pos_coor(x_px, y_px);
+
+    ///now create collision box 64x64 px
     om::vec2 x0;
-    x0.y = (pos.y - 1 / he->get_count_sprite_width() / 2);
-    x0.x = pos.x - engine.get_pos_coor(32, 0).x;
+
+    x0.x = x_px - 32;
+    x0.y = y_px - he->get_size_sprite_px() / 2;
 
     om::vec2 x1;
-    x1.y = pos.y + engine.get_pos_coor(0, 32).y - x0.y;
-    x1.x = pos.x + engine.get_pos_coor(32, 0).x - x0.x;
 
-    hero_contr = new hero_controller(he, pos, collision_box(x0, x1));
+    x1.x = x_px + 32;
+    x1.y = x0.y + 64;
+
+    om::vec2 col_pos0 = engine.get_pos_coor(x0.x, x0.y);
+    om::vec2 col_pos1 = engine.get_pos_coor(x1.x, x1.y);
+
+    hero_contr = new hero_controller(he, pos, collision_box(col_pos0, col_pos1));
 
     tex = engine.create_texture("forest-1.png");
 
@@ -84,7 +92,11 @@ void girl_game::on_initialize()
 
     tex = engine.create_texture("r.png");
 
-    roc = new rock(tex);
+    rock* roc = new rock(tex);
+
+    pos = engine.get_pos_coor(120, 100);
+
+    r_controller = new rock_controller(roc, pos);
 
     snd = engine.create_sound("t2_no_problemo.wav");
 }
@@ -121,6 +133,11 @@ void girl_game::on_event(om::event& event)
 
 void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 {
+	if(hero_contr->test_collision(r_controller->get_collision_box()))
+	{
+		std::cout << "COLLISION" << std::endl;
+	}
+
 	if (engine.is_key_down(om::keys::left))
 	{
 		hero_dir = left;
@@ -161,39 +178,6 @@ void girl_game::on_render()
 	om::mat2x3 scale1 = om::mat2x3::scale(1);
 	engine.render(*backgr->get_pawn_vbo(), backgr->get_pawn_texture(), scale1);
 
-	switch (hero_st_ren){
-	case stay:
-		hero_contr->set_position(engine.get_pos_coor(50, 100));
-		break;
-	case run:
-
-		break;
-	case jump:
-//		position.x += 0.02f;
-//		if(hero_st.jump_frame >= 11 && hero_st.jump_frame <= 13)
-//		{
-//			position.y += 0.03f;
-//		}
-//		else if(hero_st.jump_frame >= 14 && hero_st.jump_frame <= 16)
-//		{
-//			position.y -= 0.02f;
-//		}
-		break;
-	case trundle:
-//		if(hero_st.trundle_frame == 17 || hero_st.trundle_frame == 21)
-//		{
-//			position.x += 0.0f;
-//		}
-//		else
-//		{
-//			position.x += 0.02f;
-//		}
-//		position.y = -0.55f;
-		break;
-	default:
-		break;
-	}
-
 	om::mat2x3 scale = om::mat2x3::scale(0.2f);
 	//om::mat2x3 reflection = om::mat2x3::reflection_x();
 	om::mat2x3 move = om::mat2x3::move(hero_contr->get_position());
@@ -201,10 +185,11 @@ void girl_game::on_render()
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), m);
 
-	om::mat2x3 scale2 = om::mat2x3::scale(0.1f);	;
-	om::mat2x3 move2 = om::mat2x3::move(engine.get_pos_coor(300, 100));
-	om::mat2x3 m_rock = scale2 * move2;
-	engine.render(*roc->get_pawn_vbo(), roc->get_pawn_texture(), m_rock);
+	om::mat2x3 scale_r = om::mat2x3::scale(0.1f);
+	om::mat2x3 move_r = om::mat2x3::move(r_controller->get_position());
+	om::mat2x3 m_r = scale_r * move_r;
+	engine.render(*r_controller->get_rock()->get_pawn_vbo(),
+			r_controller->get_rock()->get_pawn_texture(), m_r);
 }
 
 

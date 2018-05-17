@@ -2,7 +2,7 @@
 
 #include "e_math.hxx"
 
-///x0 = right; y0 = bottom; x1 = left; y1 = top;
+///x0 = left; y0 = bottom; x1 = right; y1 = top;
 class collision_box
 {
 public:
@@ -31,4 +31,3 @@ void collision_box::move_y(float y)
 	v0.y = y;
 	v1.y = y;
 }
-

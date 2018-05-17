@@ -3,6 +3,7 @@
 #include "character.hxx"
 #include "pawn.hxx"
 #include "collision_box.hxx"
+#include "e_math.hxx"
 
 struct hero_state
 {
@@ -34,6 +35,7 @@ private:
 public:
 	controller() = default;
 	controller(om::vec2 pos, collision_box col);
+	controller(om::vec2 pos);
 	void set_position(om::vec2 pos);
 	void set_position_x(float x);
 	void set_position_y(float y);
@@ -47,6 +49,11 @@ public:
 controller::controller(om::vec2 pos, collision_box col) :
 		position(pos), col_box(col)
 {
+}
+
+controller::controller(om::vec2 pos)
+{
+	position = pos;
 }
 
 void controller::set_position(om::vec2 pos)
@@ -102,6 +109,7 @@ public:
 	hero_controller(character* hero, om::vec2 pos, collision_box col);
 	character* get_my_hero() const;
 	void hero_run(float sec, float offset_x);
+	bool test_collision(collision_box box);
 	~hero_controller();
 };
 
@@ -123,7 +131,50 @@ void hero_controller::hero_run(float sec, float offset_x)
 	move_col_box_x(offset_x);
 }
 
+bool hero_controller::test_collision(collision_box box)
+{
+	return get_collision_box().v1.x >= box.v0.x &&
+			get_collision_box().v0.x <= box.v1.x &&
+			get_collision_box().v0.y >= box.v1.y &&
+			get_collision_box().v1.y <= box.v0.y;
+}
+
 hero_controller::~hero_controller()
 {
 	delete my_hero;
+}
+
+class rock_controller : public controller
+{
+private:
+	rock* my_rock = nullptr;
+	int size = 0.1f;
+public:
+	~rock_controller();
+	rock_controller(rock* r, om::vec2 pos);
+	rock* get_rock() const;
+};
+
+rock_controller::rock_controller(rock* r, om::vec2 pos)
+	: controller(pos)
+{
+	my_rock = r;
+	om::vec2 v0;
+	v0.x = get_position().x - size / 2;
+	v0.y = get_position().y - size / 2;
+
+	om::vec2 v1;
+	v0.x = get_position().x + size / 2;
+	v0.y = get_position().y + size / 2;
+
+	set_collision_box(v0, v1);
+}
+
+rock* rock_controller::get_rock() const
+{
+	return my_rock;
+}
+
+rock_controller::~rock_controller()
+{
 }
