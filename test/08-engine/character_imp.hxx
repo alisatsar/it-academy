@@ -12,7 +12,6 @@ class character : public actor
 {
 private:
 	size_t count_sprite;
-	size_t first_position;
 	collision_box col_box;
 	///count sprite inline
 public:

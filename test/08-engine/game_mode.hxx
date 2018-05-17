@@ -72,7 +72,7 @@ void girl_game::on_initialize()
 {
 	om::vec2 pos = engine.get_pos_coor(50, 100);
 	position = pos;
-    om::texture* tex = engine.create_texture("girl.png");
+    om::texture* tex = engine.create_texture("gitl.png");
     if (nullptr == tex)
     {
         engine.log << "failed load texture\n";
@@ -80,6 +80,16 @@ void girl_game::on_initialize()
     }
 
     he = new hero(tex, 7);
+
+    om::vec2 x0;
+    x0.y = (pos.y - 1 / he->get_count_sprite() / 2);
+    x0.x = pos.x - engine.get_pos_coor(32, 0).x;
+
+    om::vec2 x1;
+    x1.y = pos.y + engine.get_pos_coor(0, 32).y - x0.y;
+    x1.x = pos.x + engine.get_pos_coor(32, 0).x - x0.x;
+
+    he->set_collision_box(x0, x1);
 
     tex = engine.create_texture("forest-1.png");
 
@@ -164,14 +174,14 @@ void girl_game::on_render()
 		position.y = engine.get_pos_coor(50, 100).y;
 		break;
 	case run:
-		position.y = -0.55f;
+		position.y = engine.get_pos_coor(50, 100).y;
 		position.x += 0.01f;
 		break;
 	case jump:
 		position.x += 0.02f;
 		if(hero_st.jump_frame >= 11 && hero_st.jump_frame <= 13)
 		{
-			position.y += 0.02f;
+			position.y += 0.03f;
 		}
 		else if(hero_st.jump_frame >= 14 && hero_st.jump_frame <= 16)
 		{

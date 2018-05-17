@@ -1255,20 +1255,14 @@ om::vec2 om::engine::get_pos_coor(float px_x, float px_y)
 	om::vec2 result;
 
 	result.x = (px_x - pos_x0) * pos_px_x;
-//	if(px_x < pos_x0)
-//	{
-//		result.x = -result.x;
-//	}
+
 	if(px_x == pos_x0)
 	{
 		result.x = 0.0f;
 	}
 
 	result.y = (px_y - pos_y0) * pos_px_y;
-//	if(px_y < pos_y0)
-//	{
-//		result.y = -result.y;
-//	}
+
 	if(px_y == pos_y0)
 	{
 		result.y = 0.0f;
