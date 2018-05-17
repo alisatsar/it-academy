@@ -27,6 +27,7 @@ struct OM_DECLSPEC mat2x3
     static mat2x3 identiry();
     static mat2x3 scale(float scale);
     static mat2x3 scale(float sx, float sy);
+    static mat2x3 reflection_x();
     static mat2x3 rotation(float thetha);
     static mat2x3 move(const vec2& delta);
     vec2          col0;

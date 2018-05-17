@@ -53,6 +53,13 @@ mat2x3 mat2x3::scale(float sx, float sy)
     return r;
 }
 
+mat2x3 mat2x3::reflection_x()
+{
+    mat2x3 r;
+    r.col0.x = -r.col0.x;
+    return r;
+}
+
 mat2x3 mat2x3::rotation(float thetha)
 {
     mat2x3 result;

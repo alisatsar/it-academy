@@ -1,7 +1,7 @@
 #pragma once
 
 #include "actor.hxx"
-
+#include "engine.hxx"
 #include "e_math.hxx"
 #include "color.hxx"
 #include "vertex_buffer.hxx"
@@ -11,8 +11,9 @@
 class character : public actor
 {
 private:
-	size_t count_sprite;
-	collision_box col_box;
+	size_t count_sprite_width;
+	size_t count_sprite_height;
+	size_t size_sprite_px;
 	///count sprite inline
 public:
 	virtual uint16_t animate(uint16_t first_frame, uint16_t count_frame,
@@ -23,10 +24,12 @@ public:
 	vbo* get_character_vbo() const;
 	void set_character_texture(om::texture* tex);
 	om::texture* get_character_texture() const;
-	void set_count_sprite(size_t count_sp);
-	size_t get_count_sprite() const;
-	void set_collision_box(om::vec2 v0, om::vec2 v1);
-	collision_box get_collision_box() const;
+	void set_count_sprite_width(size_t width);
+	size_t get_count_sprite_width() const;
+	void set_count_sprite_height(size_t height);
+	size_t get_count_sprite_height() const;
+	void set_size_sprite_px(size_t px);
+	size_t get_size_sprite_px() const;
 };
 
 void character::set_ch_vbo(vbo* ch_vbo_)
@@ -49,26 +52,37 @@ om::texture* character::get_character_texture() const
 	return get_actor_texture();
 }
 
-void character::set_count_sprite(size_t count_sp)
+void character::set_count_sprite_width(size_t width)
 {
-	count_sprite = count_sp;
+	count_sprite_width = width;
 }
 
-size_t character::get_count_sprite() const
+size_t character::get_count_sprite_width() const
 {
-	return count_sprite;
+	return count_sprite_width;
 }
 
-void character::set_collision_box(om::vec2 v0, om::vec2 v1)
+void character::set_count_sprite_height(size_t height)
 {
-	col_box.v0 = v0;
-	col_box.v1 = v1;
+	count_sprite_height = height;
 }
 
-collision_box character::get_collision_box() const
+size_t character::get_count_sprite_height() const
 {
-	return col_box;
+	return count_sprite_height;
 }
+
+void character::set_size_sprite_px(size_t px)
+{
+	size_sprite_px = px;
+}
+
+size_t character::get_size_sprite_px() const
+{
+	return size_sprite_px;
+}
+
+
 
 character::~character()
 {
@@ -77,81 +91,87 @@ character::~character()
 class hero : public character
 {
 public:
-	hero(om::texture* ch_tex_, float count);
+	hero(om::texture* ch_tex_, size_t count_sp_width,
+			size_t count_sp_height, size_t px);
 	~hero();
 	uint16_t animate(uint16_t first_frame, uint16_t last_frame,  uint16_t count_frame,
 			float delta_sec, float sec_now);
 };
 
-hero::hero(om::texture* ch_tex_, float count)
+hero::hero(om::texture* ch_tex_, size_t count_sp_width,
+		size_t count_sp_height, size_t px)
 {
 	om::tri2 t_left;
 	om::tri2 t_right;
 
-	om::color color(1.0, 1.0, 1.0, 1.0);
+	om::color color(1.0f, 1.0f, 1.0f, 1.0f);
 
-	float tex_step = 1.f / count;
+	float tex_step_x = 1.0f / count_sp_width;
+	float tex_step_y = 1.0f / count_sp_height;
 
-	t_right.v[0].pos.x = -1.f;
-	t_right.v[0].pos.y = -1.f;
-	t_right.v[0].uv.x = 0.0;
-	t_right.v[0].uv.y = 1.0 - tex_step;
+	t_right.v[0].pos.x = -1.0f;
+	t_right.v[0].pos.y = -1.0f;
+	t_right.v[0].uv.x = 0.0f;
+	t_right.v[0].uv.y = 1.0f - tex_step_y;
 	t_right.v[0].c = color;
 
-	t_right.v[1].pos.x = 1.f;
-	t_right.v[1].pos.y = -1.f;
-	t_right.v[1].uv.x = tex_step;
-	t_right.v[1].uv.y = 1.0 - tex_step;
+	t_right.v[1].pos.x = 1.0f;
+	t_right.v[1].pos.y = -1.0f;
+	t_right.v[1].uv.x = tex_step_x;
+	t_right.v[1].uv.y = 1.0f - tex_step_y;
 	t_right.v[1].c = color;
 
-	t_right.v[2].pos.x = 1.f;
-	t_right.v[2].pos.y = 1.f;
-	t_right.v[2].uv.x = tex_step;
-	t_right.v[2].uv.y = 1.0;
+	t_right.v[2].pos.x = 1.0f;
+	t_right.v[2].pos.y = 1.0f;
+	t_right.v[2].uv.x = tex_step_x;
+	t_right.v[2].uv.y = 1.0f;
 	t_right.v[2].c = color;
 
-	t_left.v[0].pos.x = 1.f;
-	t_left.v[0].pos.y = 1.f;
-	t_left.v[0].uv.x = tex_step;
-	t_left.v[0].uv.y = 1.0;
+	t_left.v[0].pos.x = 1.0f;
+	t_left.v[0].pos.y = 1.0f;
+	t_left.v[0].uv.x = tex_step_x;
+	t_left.v[0].uv.y = 1.0f;
 	t_left.v[0].c = color;
 
-	t_left.v[1].pos.x = -1.f;
-	t_left.v[1].pos.y = 1.f;
-	t_left.v[1].uv.x = 0.0;
-	t_left.v[1].uv.y = 1.0;
+	t_left.v[1].pos.x = -1.0f;
+	t_left.v[1].pos.y = 1.0f;
+	t_left.v[1].uv.x = 0.0f;
+	t_left.v[1].uv.y = 1.0f;
 	t_left.v[1].c = color;
 
-	t_left.v[2].pos.x = -1.f;
-	t_left.v[2].pos.y = -1.f;
-	t_left.v[2].uv.x = 0.0;
-	t_left.v[2].uv.y = 1.0 - tex_step;
+	t_left.v[2].pos.x = -1.0f;
+	t_left.v[2].pos.y = -1.0f;
+	t_left.v[2].uv.x = 0.0f;
+	t_left.v[2].uv.y = 1.0f - tex_step_y;
 	t_left.v[2].c = color;
 
 	vbo* v = new vbo(t_right, t_left);
 
 	set_ch_vbo(v);
 	set_character_texture(ch_tex_);
-	set_count_sprite(count);
+	set_count_sprite_width(count_sp_width);
+	set_count_sprite_height(count_sp_height);
+	set_size_sprite_px(px);
 }
 
 uint16_t hero::animate(uint16_t first_frame, uint16_t last_frame, uint16_t count_frame,
 		float delta_sec, float sec_now)
 {
-	const size_t count_sprite_line = get_count_sprite();
+	const size_t count_sprite_line = get_count_sprite_width();
 
 	uint16_t current_row = first_frame / count_sprite_line;
 
 	static float cur_time = 0.f;
 	static float last_time = 0.f;
 
-	const float tex_step = 1.f / count_sprite_line;
+	float tex_step_x = 1.0f / count_sprite_line;
+	float tex_step_y = 1.0f / get_count_sprite_height();
 
-	float left = first_frame * tex_step - current_row;
-	float right = left + tex_step;
+	float left = first_frame * tex_step_x - current_row;
+	float right = left + tex_step_x;
 
-	float top = 1.f - tex_step * current_row;
-	float botton = top - tex_step;
+	float top = 1.f - tex_step_y * current_row;
+	float botton = top - tex_step_y;
 
 	vbo* v = get_character_vbo();
 

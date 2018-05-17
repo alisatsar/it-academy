@@ -11,11 +11,24 @@ public:
 
 	collision_box() = default;
 	collision_box(om::vec2 v0_, om::vec2 v1_);
+	void move_x(float x);
+	void move_y(float y);
 };
 
 collision_box::collision_box(om::vec2 v0_, om::vec2 v1_)
 {
 	v0 = v0_;
 	v1 = v1_;
+}
+
+void collision_box::move_x(float x)
+{
+	v0.x = x;
+	v1.x = x;
+}
+void collision_box::move_y(float y)
+{
+	v0.y = y;
+	v1.y = y;
 }
 

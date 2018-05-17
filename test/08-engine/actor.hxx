@@ -1,12 +1,12 @@
 #pragma once
 
+#include "vertex_buffer.hxx"
 #include "e_math.hxx"
 #include "engine.hxx"
 
 class actor
 {
 protected:
-	uint32_t handler;
 	vbo* ch_vbo;
 	om::texture* ch_tex;
 public:
