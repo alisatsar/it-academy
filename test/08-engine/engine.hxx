@@ -149,8 +149,6 @@ public:
     std::ostream& log;
 };
 
-
-
 } // end namespace om
 
 

@@ -94,7 +94,7 @@ void girl_game::on_initialize()
 
     rock* roc = new rock(tex);
 
-    pos = engine.get_pos_coor(120, 100);
+    pos = engine.get_pos_coor(170, 100);
 
     r_controller = new rock_controller(roc, pos);
 
@@ -147,7 +147,7 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	{
 		hero_dir = right;
 		hero_st_ren = run;
-		hero_contr->hero_run(engine.get_time_from_init(), 0.01f);
+		hero_contr->hero_run(engine.get_time_from_init(), 0.05f);
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))

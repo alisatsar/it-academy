@@ -133,10 +133,9 @@ void hero_controller::hero_run(float sec, float offset_x)
 
 bool hero_controller::test_collision(collision_box box)
 {
-	return get_collision_box().v1.x >= box.v0.x &&
-			get_collision_box().v0.x <= box.v1.x &&
-			get_collision_box().v0.y >= box.v1.y &&
-			get_collision_box().v1.y <= box.v0.y;
+	collision_box c = this->get_collision_box();
+	return (c.v1.x >= box.v0.x && c.v0.x <= box.v1.x) ||
+			(c.v0.y >= box.v1.y && c.v1.y <= box.v0.y);
 }
 
 hero_controller::~hero_controller()
@@ -148,7 +147,7 @@ class rock_controller : public controller
 {
 private:
 	rock* my_rock = nullptr;
-	int size = 0.1f;
+	float size = 0.1f;
 public:
 	~rock_controller();
 	rock_controller(rock* r, om::vec2 pos);
@@ -160,12 +159,12 @@ rock_controller::rock_controller(rock* r, om::vec2 pos)
 {
 	my_rock = r;
 	om::vec2 v0;
-	v0.x = get_position().x - size / 2;
-	v0.y = get_position().y - size / 2;
+	v0.x = get_position().x - size / 2.0f;
+	v0.y = get_position().y - size / 2.0f;
 
 	om::vec2 v1;
-	v0.x = get_position().x + size / 2;
-	v0.y = get_position().y + size / 2;
+	v1.x = get_position().x + size / 2.0f;
+	v1.y = get_position().y + size / 2.0f;
 
 	set_collision_box(v0, v1);
 }
