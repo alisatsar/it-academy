@@ -33,4 +33,15 @@ public:
     {
     	return triangles[index];
     }
+
+    void change_x_coord(float x)
+    {
+    	triangles[0].v[0].uv.x += x;
+    	triangles[1].v[1].uv.x += x;
+    	triangles[1].v[2].uv.x += x;
+
+    	triangles[0].v[1].uv.x += x;
+    	triangles[0].v[2].uv.x += x;
+    	triangles[1].v[0].uv.x += x;
+    }
 };

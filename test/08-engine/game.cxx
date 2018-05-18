@@ -12,7 +12,7 @@
 
 int initialize_and_start_main_loop()
 {
-	om::window_size window_size(640, 480);
+	om::window_size window_size(window_width, window_height);
 
 	om::engine engine("", window_size);
 

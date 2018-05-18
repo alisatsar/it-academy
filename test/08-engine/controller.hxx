@@ -4,6 +4,7 @@
 #include "pawn.hxx"
 #include "collision_box.hxx"
 #include "e_math.hxx"
+#include "camera.hxx"
 
 struct hero_state
 {
@@ -104,19 +105,25 @@ private:
 	hero_state hero_st;
 	hero_state_render hero_st_ren = stay;
 	direction hero_direc = right;
+	camera* cam =nullptr;
+
 public:
 	hero_controller() = default;
-	hero_controller(character* hero, om::vec2 pos, collision_box col);
+	hero_controller(character* hero, om::vec2 pos, collision_box col,
+			om::vec2 window_dim);
 	character* get_my_hero() const;
 	void hero_run(float sec, float offset_x);
 	bool test_collision(collision_box box);
+	om::vec2 get_camera_pos() const;
 	~hero_controller();
 };
 
-hero_controller::hero_controller(character* hero, om::vec2 pos, collision_box col) :
+hero_controller::hero_controller(character* hero, om::vec2 pos, collision_box col,
+		om::vec2 window_dim) :
 		controller(pos, col)
 {
 	my_hero = hero;
+	cam = new camera(window_dim.x, window_dim.y);
 }
 
 character* hero_controller::get_my_hero() const
@@ -129,13 +136,19 @@ void hero_controller::hero_run(float sec, float offset_x)
 	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 9, 3, 0.1, sec);
 	set_position_x(get_position().x + offset_x);
 	move_col_box_x(offset_x);
+	cam->update_camera(offset_x - 0.0099, 0.0f);
 }
 
 bool hero_controller::test_collision(collision_box box)
 {
 	collision_box c = this->get_collision_box();
-	return (c.v1.x >= box.v0.x && c.v0.x <= box.v1.x) ||
-			(c.v0.y >= box.v1.y && c.v1.y <= box.v0.y);
+	return (c.v1.x >= box.v0.x && c.v0.x <= box.v1.x) &&
+			(c.v1.y >= box.v0.y && c.v0.y <= box.v1.y);
+}
+
+om::vec2 hero_controller::get_camera_pos() const
+{
+	return cam->get_pos();
 }
 
 hero_controller::~hero_controller()

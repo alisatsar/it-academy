@@ -6,6 +6,14 @@
 #include "engine.hxx"
 #include "character.hxx"
 
+///screen dimension compile-runtime
+constexpr size_t window_width{640};
+constexpr size_t window_height{480};
+
+///dimension of the level
+constexpr size_t level_width{1280};
+constexpr size_t level_height{480};
+
 struct lila
 {
     virtual ~lila();
@@ -26,14 +34,11 @@ private:
 	std::vector<om::texture*> all_textures;
 	om::sound*   snd        = nullptr;
 
-	pawn* backgr = nullptr;
+	background* backgr = nullptr;
 
 	hero_controller* hero_contr = nullptr;
 	rock_controller* r_controller = nullptr;
 	float x;
-	hero_state hero_st;
-	hero_state_render hero_st_ren = stay;
-	direction hero_dir = right;
 public:
 
     explicit girl_game(om::engine& engine)
@@ -81,20 +86,24 @@ void girl_game::on_initialize()
     x1.x = x_px + 32;
     x1.y = x0.y + 64;
 
-    om::vec2 col_pos0 = engine.get_pos_coor(x0.x, x0.y);
-    om::vec2 col_pos1 = engine.get_pos_coor(x1.x, x1.y);
+    om::vec2 pos0 = engine.get_pos_coor(x0.x, x0.y);
+    om::vec2 pos1 = engine.get_pos_coor(x1.x, x1.y);
 
-    hero_contr = new hero_controller(he, pos, collision_box(col_pos0, col_pos1));
+    hero_contr = new hero_controller(he, pos, collision_box(pos0, pos1),
+    		engine.get_tex_coor(window_width / 3, window_height));
 
-    tex = engine.create_texture("forest-1.png");
+    tex = engine.create_texture("level.png");
 
-    backgr = new background(tex);
+    pos0 = engine.get_tex_coor(0.0f, 0.0f);
+    pos1 = engine.get_tex_coor(window_width / 3,  window_height);
+
+    backgr = new background(tex, pos0, pos1);
 
     tex = engine.create_texture("r.png");
 
     rock* roc = new rock(tex);
 
-    pos = engine.get_pos_coor(170, 100);
+    pos = engine.get_pos_coor(180, 130);
 
     r_controller = new rock_controller(roc, pos);
 
@@ -140,34 +149,26 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 	if (engine.is_key_down(om::keys::left))
 	{
-		hero_dir = left;
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::right))
 	{
-		hero_dir = right;
-		hero_st_ren = run;
-		hero_contr->hero_run(engine.get_time_from_init(), 0.05f);
+		hero_contr->hero_run(engine.get_time_from_init(), 0.01f);
+		backgr->set_tex_pos(hero_contr->get_camera_pos());
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))
 	{
-		hero_st_ren = jump;
-		//hero.
 		//hero_st.jump_frame = he->animate(hero_st.jump_frame, 16, 6, 0.1, engine.get_time_from_init());
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::down))
 	{
-		hero_st_ren = trundle;
 		//hero_st.trundle_frame = he->animate(hero_st.trundle_frame, 21, 4, 0.1, engine.get_time_from_init());
 		on_render();
 	}
 	else
 	{
-		hero_st_ren = stay;
-		hero_st.run_frame = 6;
-		hero_st.jump_frame = 10;
 		//hero_st.stay_frame = he->animate(hero_st.stay_frame, 5, 5, 0.2, engine.get_time_from_init());
 		on_render();
 	}
