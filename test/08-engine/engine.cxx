@@ -145,6 +145,9 @@ float pos_y0;
 float pos_px_x;
 float pos_px_y;
 
+///the ratio of the window to world pixel into gl_coordinates
+om::vec2 ratio_win_to_world;
+
 class sound_buffer_impl final : public om::sound
 {
 public:
@@ -787,7 +790,7 @@ void om::engine::exit(int return_code)
 
 static void audio_callback(void*, uint8_t*, int);
 
-om::engine::engine(std::string_view, om::window_size window_size)
+om::engine::engine(std::string_view, om::window_size window_size, om::window_size level_size)
     : log(std::cout)
 {
 	om::win_size = window_size;
@@ -803,6 +806,9 @@ om::engine::engine(std::string_view, om::window_size window_size)
     pos_y0 = win_size.window_height / 2.0f;
     pos_px_x = 1.0f / (win_size.window_width / 2.0f);
     pos_px_y = 1.0f / (win_size.window_height / 2.0f);
+
+    ratio_win_to_world.x = window_size.window_width / level_size.window_width;
+    ratio_win_to_world.y = window_size.window_height / level_size.window_height;
 
     {
         using namespace std;
@@ -1271,3 +1277,18 @@ om::vec2 om::engine::get_pos_coor(float px_x, float px_y)
 	return result;
 }
 
+om::vec2 om::engine::get_tex_coor_world(float px_x, float px_y)
+{
+	om::vec2 result = get_tex_coor(px_x, px_y);
+	result.x = result.x * ratio_win_to_world.x;
+	result.y = result.y *ratio_win_to_world.y;
+	return result;
+}
+
+om::vec2 om::engine::get_pos_coor_world(float px_x, float px_y)
+{
+	om::vec2 result = get_pos_coor(px_x, px_y);
+	result.x = result.x * ratio_win_to_world.x;
+	result.y = result.y * ratio_win_to_world.y;
+	return result;
+}

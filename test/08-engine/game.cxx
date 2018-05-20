@@ -13,8 +13,9 @@
 int initialize_and_start_main_loop()
 {
 	om::window_size window_size(window_width, window_height);
+	om::window_size level_size(level_width, window_height);
 
-	om::engine engine("", window_size);
+	om::engine engine("", window_size, level_size);
 
     std::unique_ptr<lila> game = om_tat_sat(engine);
 

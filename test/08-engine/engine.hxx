@@ -113,7 +113,7 @@ window_size win_size;
 class OM_DECLSPEC engine
 {
 public:
-    explicit engine(std::string_view config, om::window_size window_size);
+    explicit engine(std::string_view, om::window_size window_size, om::window_size level_size);
     ~engine();
     engine& operator      =(engine&& other); // move assignment
     engine(const engine&) = delete;
@@ -144,6 +144,8 @@ public:
     om::vec2 get_tex_coor(float px_x, float px_y);
     om::vec2 get_pos_coor(float px_x, float px_y);
 
+    om::vec2 get_tex_coor_world(float px_x, float px_y);
+    om::vec2 get_pos_coor_world(float px_x, float px_y);
     void exit(int return_code);
 
     std::ostream& log;

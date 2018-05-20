@@ -90,7 +90,7 @@ void girl_game::on_initialize()
     om::vec2 pos1 = engine.get_pos_coor(x1.x, x1.y);
 
     hero_contr = new hero_controller(he, pos, collision_box(pos0, pos1),
-    		engine.get_tex_coor(window_width / 3, window_height));
+    		engine.get_tex_coor(level_width, level_height));
 
     tex = engine.create_texture("level.png");
 

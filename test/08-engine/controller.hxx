@@ -105,7 +105,7 @@ private:
 	hero_state hero_st;
 	hero_state_render hero_st_ren = stay;
 	direction hero_direc = right;
-	camera* cam =nullptr;
+	camera* cam = nullptr;
 
 public:
 	hero_controller() = default;
