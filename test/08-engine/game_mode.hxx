@@ -31,14 +31,15 @@ class girl_game final : public lila
 {
 private:
 	om::engine& engine;
-	std::vector<om::texture*> all_textures;
 	om::sound*   snd        = nullptr;
 
 	background* backgr = nullptr;
+	background* backgr2 = nullptr;
 
 	hero_controller* hero_contr = nullptr;
 	rock_controller* r_controller = nullptr;
-	float x;
+	camera* cam;
+	om::texture* t = nullptr;
 public:
 
     explicit girl_game(om::engine& engine)
@@ -69,13 +70,17 @@ void girl_game::on_initialize()
         return;
     }
 
+    cam = new camera();
+
+    //create our hero
     character* he = new hero(tex, 7, 7, 90);
 
+    //create position in world
     float x_px = 100;
     float y_px = 100;
     om::vec2 pos = engine.get_pos_coor(x_px, y_px);
 
-    ///now create collision box 64x64 px
+    ///now create collision box 64x64 px for our hero
     om::vec2 x0;
 
     x0.x = x_px - 32;
@@ -89,15 +94,17 @@ void girl_game::on_initialize()
     om::vec2 pos0 = engine.get_pos_coor(x0.x, x0.y);
     om::vec2 pos1 = engine.get_pos_coor(x1.x, x1.y);
 
-    hero_contr = new hero_controller(he, pos, collision_box(pos0, pos1),
-    		engine.get_tex_coor(level_width, level_height));
+    hero_contr = new hero_controller(he, pos, collision_box(pos0, pos1));
 
-    tex = engine.create_texture("level.png");
+    //set texture backgroud
+    tex = engine.create_texture("forest-1.png");
 
-    pos0 = engine.get_tex_coor(0.0f, 0.0f);
-    pos1 = engine.get_tex_coor(window_width / 3,  window_height);
+    backgr = new background(tex);
 
-    backgr = new background(tex, pos0, pos1);
+    t = engine.create_texture("forest-1.png");
+
+    backgr2 = new background(t);
+    backgr->change_vbo_coord_x(2.0f);
 
     tex = engine.create_texture("r.png");
 
@@ -153,8 +160,9 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	}
 	else if (engine.is_key_down(om::keys::right))
 	{
-		hero_contr->hero_run(engine.get_time_from_init(), 0.01f);
-		backgr->set_tex_pos(hero_contr->get_camera_pos());
+		//call controller
+		hero_contr->hero_run(engine.get_time_from_init());
+		cam->update_camera(-0.004f, 0.0f);
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))
@@ -176,22 +184,30 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 void girl_game::on_render()
 {
-	om::mat2x3 scale1 = om::mat2x3::scale(1);
-	engine.render(*backgr->get_pawn_vbo(), backgr->get_pawn_texture(), scale1);
+	//matrixes for background
+	om::mat2x3 scale_backg = om::mat2x3::scale(1.0f);
+	om::mat2x3 move_camera = cam->get_camera_matrix();
+	om::mat2x3 back_move = om::mat2x3::move(backgr->get_pos_l_b());
+	om::mat2x3 matrix_back = move_camera * back_move * scale_backg;
+	engine.render(*backgr->get_pawn_vbo(), backgr->get_pawn_texture(), matrix_back);
 
-	om::mat2x3 scale = om::mat2x3::scale(0.2f);
-	//om::mat2x3 reflection = om::mat2x3::reflection_x();
-	om::mat2x3 move = om::mat2x3::move(hero_contr->get_position());
-	om::mat2x3 m = scale * move;
+	om::mat2x3 back2_move = om::mat2x3::move(backgr2->get_pos_l_b());
+	om::mat2x3 matrix_back2 = move_camera * back2_move * scale_backg;
+	engine.render(*backgr2->get_pawn_vbo(), backgr2->get_pawn_texture(), matrix_back2);
+
+	//hero
+	om::mat2x3 hero_scale = om::mat2x3::scale(0.2f);
+	om::mat2x3 hero_move = om::mat2x3::move(hero_contr->get_position());
+	om::mat2x3 hero_matrix = hero_scale * hero_move;
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
-			hero_contr->get_my_hero()->get_character_texture(), m);
+			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
 
 	om::mat2x3 scale_r = om::mat2x3::scale(0.1f);
-	om::mat2x3 move_r = om::mat2x3::move(r_controller->get_position());
-	om::mat2x3 m_r = scale_r * move_r;
+	om::vec2 v = r_controller->get_position();
+	om::mat2x3 move_r = om::mat2x3::move(v);
+	om::mat2x3 m_r = scale_r * move_r * move_camera;
 	engine.render(*r_controller->get_rock()->get_pawn_vbo(),
 			r_controller->get_rock()->get_pawn_texture(), m_r);
 }
-
 
 

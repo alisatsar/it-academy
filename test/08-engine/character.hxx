@@ -82,8 +82,6 @@ size_t character::get_size_sprite_px() const
 	return size_sprite_px;
 }
 
-
-
 character::~character()
 {
 }

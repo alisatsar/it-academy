@@ -7,19 +7,19 @@ class camera
 {
 private:
 	om::vec2 v0;
-	om::vec2 v1;
+	om::mat2x3 move;
 public:
-	camera(float width, float height);
+	camera();
 	om::vec2 get_pos() const;
 	void update_camera(float x, float y);
+	om::mat2x3 get_camera_matrix() const;
 };
 
-camera::camera(float width, float height)
+camera::camera()
 {
 	v0.x = 0.0f;
 	v0.y = 0.0f;
-	v1.x = width;
-	v1.y = height;
+	move = om::mat2x3::move(v0);
 }
 
 om::vec2 camera::get_pos() const
@@ -31,6 +31,10 @@ void camera::update_camera(float x, float y)
 {
 	v0.x += x;
 	v0.y += y;
-	v1.x += x;
-	v1.y += y;
+	move = om::mat2x3::move(v0);
+}
+
+om::mat2x3 camera::get_camera_matrix() const
+{
+	return move;
 }
