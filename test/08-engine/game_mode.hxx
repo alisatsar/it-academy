@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "controller.hxx"
 #include "engine.hxx"
 #include "character.hxx"
+#include "world.hxx"
 
 ///screen dimension compile-runtime
 constexpr size_t window_width{640};
@@ -32,13 +34,12 @@ class girl_game final : public lila
 private:
 	om::engine& engine;
 	om::sound*   snd        = nullptr;
-
-	background* backgr = nullptr;
-	background* backgr2 = nullptr;
+	//
+	std::vector<std::string> backgrounds;
+	std::vector<pawn*> backgrounds_x;
 
 	hero_controller* hero_contr = nullptr;
-	rock_controller* r_controller = nullptr;
-	camera* cam;
+	camera* cam = nullptr;
 	om::texture* t = nullptr;
 public:
 
@@ -73,7 +74,7 @@ void girl_game::on_initialize()
     cam = new camera();
 
     //create our hero
-    character* he = new hero(tex, 7, 7, 90);
+    character* hero = new character(tex, 7, 7, 90);
 
     //create position in world
     float x_px = 100;
@@ -84,7 +85,7 @@ void girl_game::on_initialize()
     om::vec2 x0;
 
     x0.x = x_px - 32;
-    x0.y = y_px - he->get_size_sprite_px() / 2;
+    x0.y = y_px - hero->get_size_sprite_px() / 2;
 
     om::vec2 x1;
 
@@ -94,25 +95,22 @@ void girl_game::on_initialize()
     om::vec2 pos0 = engine.get_pos_coor(x0.x, x0.y);
     om::vec2 pos1 = engine.get_pos_coor(x1.x, x1.y);
 
-    hero_contr = new hero_controller(he, pos, collision_box(pos0, pos1));
-
-    //set texture backgroud
-    tex = engine.create_texture("forest-1.png");
-
-    backgr = new background(tex);
-
-    t = engine.create_texture("forest-1.png");
-
-    backgr2 = new background(t);
-    backgr->change_vbo_coord_x(2.0f);
-
-    tex = engine.create_texture("r.png");
-
-    rock* roc = new rock(tex);
+    hero_contr = new hero_controller(hero, pos, collision_box(pos0, pos1));
 
     pos = engine.get_pos_coor(180, 130);
 
-    r_controller = new rock_controller(roc, pos);
+    backgrounds = { "sky-2.png", "forest-1.png", "sky-2.png", "forest-1.png"};
+    om::vec2 size;
+    for(auto i : backgrounds)
+    {
+    	tex = engine.create_texture(i);
+    	if (nullptr == tex)
+    	{
+    	    engine.log << "failed load texture\n";
+    	    return;
+    	}
+    	backgrounds_x.push_back(new pawn(tex));
+    }
 
     snd = engine.create_sound("t2_no_problemo.wav");
 }
@@ -149,11 +147,6 @@ void girl_game::on_event(om::event& event)
 
 void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 {
-	if(hero_contr->test_collision(r_controller->get_collision_box()))
-	{
-		std::cout << "COLLISION" << std::endl;
-	}
-
 	if (engine.is_key_down(om::keys::left))
 	{
 		on_render();
@@ -184,17 +177,15 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 void girl_game::on_render()
 {
-	//matrixes for background
 	om::mat2x3 scale_backg = om::mat2x3::scale(1.0f);
 	om::mat2x3 move_camera = cam->get_camera_matrix();
-	om::mat2x3 back_move = om::mat2x3::move(backgr->get_pos_l_b());
-	om::mat2x3 matrix_back = move_camera * back_move * scale_backg;
-	engine.render(*backgr->get_pawn_vbo(), backgr->get_pawn_texture(), matrix_back);
-
-	om::mat2x3 back2_move = om::mat2x3::move(backgr2->get_pos_l_b());
-	om::mat2x3 matrix_back2 = move_camera * back2_move * scale_backg;
-	engine.render(*backgr2->get_pawn_vbo(), backgr2->get_pawn_texture(), matrix_back2);
-
+	om::mat2x3 b = scale_backg * move_camera;
+	pawn* p = nullptr;
+	//matrixes for background
+	for(size_t i = 0; i < backgrounds_x.size(); ++i)
+	{
+		engine.render(*backgrounds_x[i]->get_actor_vbo(), backgrounds_x[i]->get_actor_texture(), b);
+	}
 	//hero
 	om::mat2x3 hero_scale = om::mat2x3::scale(0.2f);
 	om::mat2x3 hero_move = om::mat2x3::move(hero_contr->get_position());
@@ -202,12 +193,7 @@ void girl_game::on_render()
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
 
-	om::mat2x3 scale_r = om::mat2x3::scale(0.1f);
-	om::vec2 v = r_controller->get_position();
-	om::mat2x3 move_r = om::mat2x3::move(v);
-	om::mat2x3 m_r = scale_r * move_r * move_camera;
-	engine.render(*r_controller->get_rock()->get_pawn_vbo(),
-			r_controller->get_rock()->get_pawn_texture(), m_r);
-}
+	delete p;
 
+}
 

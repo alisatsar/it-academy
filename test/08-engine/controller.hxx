@@ -128,7 +128,7 @@ character* hero_controller::get_my_hero() const
 
 void hero_controller::hero_run(float sec)
 {
-	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 9, 3, 0.1, sec);
+	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 3, 9, 0.1, sec);
 }
 
 bool hero_controller::test_collision(collision_box box)
@@ -144,37 +144,4 @@ hero_controller::~hero_controller()
 	delete my_hero;
 }
 
-class rock_controller : public controller
-{
-private:
-	rock* my_rock = nullptr;
-	float size = 0.1f;
-public:
-	~rock_controller();
-	rock_controller(rock* r, om::vec2 pos);
-	rock* get_rock() const;
-};
 
-rock_controller::rock_controller(rock* r, om::vec2 pos)
-	: controller(pos)
-{
-	my_rock = r;
-	om::vec2 v0;
-	v0.x = get_position().x - size / 2.0f;
-	v0.y = get_position().y - size / 2.0f;
-
-	om::vec2 v1;
-	v1.x = get_position().x + size / 2.0f;
-	v1.y = get_position().y + size / 2.0f;
-
-	set_collision_box(v0, v1);
-}
-
-rock* rock_controller::get_rock() const
-{
-	return my_rock;
-}
-
-rock_controller::~rock_controller()
-{
-}

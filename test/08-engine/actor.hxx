@@ -7,44 +7,60 @@
 class actor
 {
 protected:
-	vbo* ch_vbo = nullptr;
-	om::texture* ch_tex = nullptr;
+	vbo* actor_vbo = nullptr;
+	om::texture* tex = nullptr;
 public:
 	virtual ~actor() = 0;
-	void set_actor_vbo(vbo* ch_vbo_);
-	void change_vbo_coord_x(float x);
+	//set
+	void set_actor_vbo(om::tri2 t_right, om::tri2 t_left);
+	void set_actor_texture(om::texture* tex_);
+	//get
 	vbo* get_actor_vbo() const;
-	void set_actor_texture(om::texture* tex);
 	om::texture* get_actor_texture() const;
+	//change_vbo
+	void change_vbo_coord_x(float x);
+	void change_vbo_coord_y(float y);
+	void changet_texture_coord(float left, float right, float top, float bottom);
 };
 
-void actor::set_actor_vbo(vbo* ch_vbo_)
+void actor::set_actor_vbo(om::tri2 t_right, om::tri2 t_left)
 {
-	ch_vbo = ch_vbo_;
+	actor_vbo = new vbo(t_right, t_left);
+}
+
+void actor::set_actor_texture(om::texture* tex_)
+{
+	tex = tex_;
 }
 
 vbo* actor::get_actor_vbo() const
 {
-	return ch_vbo;
-}
-
-void actor::set_actor_texture(om::texture* tex)
-{
-	ch_tex = tex;
-}
-
-void actor::change_vbo_coord_x(float x)
-{
-	ch_vbo->change_x_coord(x);
+	return actor_vbo;
 }
 
 om::texture* actor::get_actor_texture() const
 {
-	return ch_tex;
+	return tex;
 }
+
+void actor::change_vbo_coord_x(float x)
+{
+	actor_vbo->change_x_coord(x);
+}
+
+void actor::change_vbo_coord_y(float y)
+{
+	actor_vbo->change_y_coord(y);
+}
+
+void actor::changet_texture_coord(float left, float right, float top, float bottom)
+{
+	actor_vbo->change_vbo_tex(left, right, top, bottom);
+}
+
 
 actor::~actor()
 {
-	delete ch_vbo;
-	delete ch_tex;
+	delete actor_vbo;
+	delete tex;
 }

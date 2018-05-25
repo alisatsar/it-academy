@@ -1,21 +1,51 @@
 #pragma once
 
-#include <map>
+#include <vector>
 #include <cstdint>
 #include <memory>
+#include <string_view>
 #include "pawn.hxx"
+#include "engine.hxx"
 
 class world
 {
 private:
-	std::map<uint32_t, std::shared_ptr<background*>> bacgrounds;
+	std::vector<pawn*> backgrounds;
 public:
-	world() = default;
+	world();
 	~world() = default;
-	bool add_pawn(uint32_t key, pawn* pawn_);
+//	void add_background(om::texture* texture, float position);
+//	size_t get_size_backgrounds() const;
+//	pawn* get_background(size_t index);
 };
 
-bool world::add_pawn(uint32_t key, pawn* pawn_)
+world::world()
 {
-
 }
+
+//void world::add_background(om::texture* texture, float position)
+//{
+//	om::vec2 size;
+//	size.x = texture->get_width();
+//	size.y = texture->get_height();
+//
+//	pawn* background = new pawn(texture);
+//
+//	background->change_pos_x(position);
+//
+//	backgrounds.push_back(background);
+//}
+//
+//size_t world::get_size_backgrounds() const
+//{
+//	return backgrounds.size();
+//}
+//
+//pawn* world::get_background(size_t index)
+//{
+//	if (index < backgrounds.size())
+//	{
+//		return backgrounds[index];
+//	}
+//	return nullptr;
+//}

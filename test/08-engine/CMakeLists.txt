@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 project(08-1-prepare-engine-for-game)
 
-add_library(engine-08-1 SHARED engine.cxx engine.hxx picopng.hxx)
+add_library(engine-08-1 SHARED engine.cxx engine.hxx picopng.hxx sdl2_opengl.hxx)
 target_compile_features(engine-08-1 PUBLIC cxx_std_17)
 
 add_library(e_math SHARED e_math.cxx e_math.hxx)
