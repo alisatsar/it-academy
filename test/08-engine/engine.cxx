@@ -20,6 +20,13 @@
 #include "picopng.hxx"
 #include "sdl2_opengl.hxx"
 
+std::istream& operator>>(std::istream& is, backgrounds& b)
+{
+	is >> b.name;
+	is >> b.position.x;
+	is >> b.position.y;
+	return is;
+}
 
 om::texture::~texture() {}
 

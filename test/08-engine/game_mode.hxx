@@ -35,7 +35,7 @@ private:
 	om::engine& engine;
 	om::sound*   snd        = nullptr;
 	//
-	std::vector<std::string> backgrounds;
+
 	std::vector<pawn*> backgrounds_x;
 
 	hero_controller* hero_contr = nullptr;
@@ -99,17 +99,28 @@ void girl_game::on_initialize()
 
     pos = engine.get_pos_coor(180, 130);
 
-    backgrounds = { "sky-2.png", "forest-1.png", "sky-2.png", "forest-1.png"};
-    om::vec2 size;
-    for(auto i : backgrounds)
+    std::vector<backgrounds> all_backgrounds;
+    int count;
+    std::ifstream file("background.txt");
+    assert(!!file);
+    file >> count;
+
+    backgrounds b;
+    for (int i = 0; i < count; ++i)
     {
-    	tex = engine.create_texture(i);
+    	file >> b;
+    	all_backgrounds.push_back(b);
+    }
+
+    for(auto i : all_backgrounds)
+    {
+    	tex = engine.create_texture(i.name);
     	if (nullptr == tex)
     	{
     	    engine.log << "failed load texture\n";
     	    return;
     	}
-    	backgrounds_x.push_back(new pawn(tex));
+    	backgrounds_x.push_back(new pawn(tex, i.position));
     }
 
     snd = engine.create_sound("t2_no_problemo.wav");

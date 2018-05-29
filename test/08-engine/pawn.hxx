@@ -13,6 +13,7 @@ class pawn : public actor
 {
 public:
 	pawn(om::texture* tex_);
+	pawn(om::texture* tex_, om::vec2 position);
 	~pawn();
 	void change_pos_x(float x);
 };
@@ -64,6 +65,56 @@ pawn::pawn(om::texture* tex_)
 
 	set_actor_texture(tex_);
 }
+
+///position - left and bottom point
+pawn::pawn(om::texture* tex_, om::vec2 position)
+{
+	om::tri2 t_left;
+	om::tri2 t_right;
+
+	om::color color(1.0, 1.0, 1.0, 1.0);
+
+	t_right.v[0].pos.x = position.x;
+	t_right.v[0].pos.y = position.y;
+	t_right.v[0].uv.x = 0.0f;
+	t_right.v[0].uv.y = 0.0f;
+	t_right.v[0].c = color;
+
+	t_right.v[1].pos.x = position.x + 2.0f;
+	t_right.v[1].pos.y = position.y;
+	t_right.v[1].uv.x = 1.0f;
+	t_right.v[1].uv.y = 0.0f;
+	t_right.v[1].c = color;
+
+	t_right.v[2].pos.x = position.x + 2.0f;
+	t_right.v[2].pos.y = position.y + 2.0f;
+	t_right.v[2].uv.x = 1.0f;
+	t_right.v[2].uv.y = 1.0f;
+	t_right.v[2].c = color;
+
+	t_left.v[0].pos.x = position.x + 2.0f;
+	t_left.v[0].pos.y = position.y + 2.0f;
+	t_left.v[0].uv.x = 1.0f;
+	t_left.v[0].uv.y = 1.0f;
+	t_left.v[0].c = color;
+
+	t_left.v[1].pos.x = position.x;
+	t_left.v[1].pos.y = position.y + 2.0f;
+	t_left.v[1].uv.x = 0.0f;
+	t_left.v[1].uv.y = 1.0f;
+	t_left.v[1].c = color;
+
+	t_left.v[2].pos.x = position.x;
+	t_left.v[2].pos.y = position.y;
+	t_left.v[2].uv.x = 0.0f;
+	t_left.v[2].uv.y = 0.0f;
+	t_left.v[2].c = color;
+
+	set_actor_vbo(t_right, t_left);
+
+	set_actor_texture(tex_);
+}
+
 
 void pawn::change_pos_x(float x)
 {

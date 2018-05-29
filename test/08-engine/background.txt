@@ -1,0 +1,5 @@
+4
+sky-2.png	-1.0	-1.0
+forest-1.png	-1.0	-1.0
+sky-2.png	1.0	-1.0
+forest-1.png	1.0	-1.0

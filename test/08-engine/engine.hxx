@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <iosfwd>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -18,6 +19,14 @@ void delay(int sec);
 #ifndef OM_DECLSPEC
 #define OM_DECLSPEC
 #endif
+
+struct backgrounds
+{
+	std::string name;
+	om::vec2 position;
+};
+
+std::istream& operator>>(std::istream& is, backgrounds&);
 
 namespace om
 {
@@ -70,6 +79,8 @@ OM_DECLSPEC std::ostream& operator<<(std::ostream& stream, const input_data&);
 OM_DECLSPEC std::ostream& operator<<(std::ostream& stream,
                                      const hardware_data&);
 //OM_DECLSPEC std::ostream& operator<<(std::ostream& stream, const event& e);
+
+
 
 
 class OM_DECLSPEC texture
