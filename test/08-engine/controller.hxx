@@ -111,7 +111,7 @@ public:
 	hero_controller(character* hero, om::vec2 pos, collision_box col);
 	character* get_my_hero() const;
 	void hero_run(float sec);
-	bool test_collision(collision_box box);
+	bool test_collision(collision_box* box);
 	~hero_controller();
 };
 
@@ -131,11 +131,11 @@ void hero_controller::hero_run(float sec)
 	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 3, 9, 0.1, sec);
 }
 
-bool hero_controller::test_collision(collision_box box)
+bool hero_controller::test_collision(collision_box* box)
 {
 	collision_box c = this->get_collision_box();
-	return (c.v1.x >= box.v0.x && c.v0.x <= box.v1.x) &&
-			(c.v1.y >= box.v0.y && c.v0.y <= box.v1.y);
+	return (c.v1.x >= box->v0.x && c.v0.x <= box->v1.x) &&
+			(c.v1.y >= box->v0.y && c.v0.y <= box->v1.y);
 }
 
 

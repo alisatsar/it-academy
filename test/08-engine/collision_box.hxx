@@ -7,10 +7,12 @@ class collision_box
 {
 public:
 	om::vec2 v0 {0.0f, 0.0f};
-	om::vec2 v1 {0.0f, 0.0f};
+	om::vec2 v1 {1.0f, 1.0f};
+	om::mat2x3 matrix;
 
 	collision_box() = default;
 	collision_box(om::vec2 v0_, om::vec2 v1_);
+	collision_box(om::mat2x3 matrix);
 	void move_x(float x);
 	void move_y(float y);
 };
@@ -30,4 +32,9 @@ void collision_box::move_y(float y)
 {
 	v0.y += y;
 	v1.y += y;
+}
+
+collision_box::collision_box(om::mat2x3 matrix_) :
+		matrix(matrix_)
+{
 }

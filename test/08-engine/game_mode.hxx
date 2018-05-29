@@ -34,13 +34,16 @@ class girl_game final : public lila
 private:
 	om::engine& engine;
 	om::sound*   snd        = nullptr;
-	//
 
 	std::vector<pawn*> backgrounds_x;
+
+	std::vector<barrier*> rocks;
 
 	hero_controller* hero_contr = nullptr;
 	camera* cam = nullptr;
 	om::texture* t = nullptr;
+
+	world* game_world = nullptr;
 public:
 
     explicit girl_game(om::engine& engine)
@@ -97,20 +100,20 @@ void girl_game::on_initialize()
 
     hero_contr = new hero_controller(hero, pos, collision_box(pos0, pos1));
 
-    pos = engine.get_pos_coor(180, 130);
+   	std::vector<backgrounds> all_backgrounds;
+   	std::uint32_t count_of_backgrounds;
 
-    std::vector<backgrounds> all_backgrounds;
-    int count;
-    std::ifstream file("background.txt");
-    assert(!!file);
-    file >> count;
+   	std::ifstream file("background.txt");
+   	assert(!!file);
 
-    backgrounds b;
-    for (int i = 0; i < count; ++i)
-    {
-    	file >> b;
-    	all_backgrounds.push_back(b);
-    }
+   	file >> count_of_backgrounds;
+
+   	backgrounds b;
+    for (std::uint32_t i = 0; i < count_of_backgrounds; ++i)
+   	{
+   		file >> b;
+        all_backgrounds.push_back(b);
+   	}
 
     for(auto i : all_backgrounds)
     {
@@ -122,6 +125,33 @@ void girl_game::on_initialize()
     	}
     	backgrounds_x.push_back(new pawn(tex, i.position));
     }
+
+   	std::uint32_t count_of_barriers;
+
+   	std::ifstream file2("barrier.txt");
+   	assert(!!file2);
+
+   	file2 >> count_of_barriers;
+
+   	std::string name;
+
+   	file2 >> name;
+
+   	tex = engine.create_texture(name);
+   	if (nullptr == tex)
+   	{
+   		engine.log << "failed load texture\n";
+   		return;
+	}
+
+   	barrier* rock;
+   	om::vec2 size;
+    for (std::uint32_t i = 0; i < count_of_barriers; ++i)
+   	{
+    	file2 >> pos.x >> pos.y >> size.x >> size.y;
+   		rock = new barrier(tex, engine.get_pos_coor(pos.x, pos.y), size);
+   		rocks.push_back(rock);
+   	}
 
     snd = engine.create_sound("t2_no_problemo.wav");
 }
@@ -184,6 +214,13 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 		//hero_st.stay_frame = he->animate(hero_st.stay_frame, 5, 5, 0.2, engine.get_time_from_init());
 		on_render();
 	}
+	for(size_t i = 0; i < rocks.size(); ++i)
+	{
+		if(hero_contr->test_collision(rocks[i]->col_box))
+		{
+			std::cout << "col" << std::endl;
+		}
+	}
 }
 
 void girl_game::on_render()
@@ -191,20 +228,26 @@ void girl_game::on_render()
 	om::mat2x3 scale_backg = om::mat2x3::scale(1.0f);
 	om::mat2x3 move_camera = cam->get_camera_matrix();
 	om::mat2x3 b = scale_backg * move_camera;
-	pawn* p = nullptr;
 	//matrixes for background
 	for(size_t i = 0; i < backgrounds_x.size(); ++i)
 	{
 		engine.render(*backgrounds_x[i]->get_actor_vbo(), backgrounds_x[i]->get_actor_texture(), b);
 	}
+	//matrixes for background
+
+	om::mat2x3 mat_roc;
+	for(size_t i = 0; i < rocks.size(); ++i)
+	{
+		mat_roc = rocks[i]->get_matrix();
+		engine.render(*rocks[i]->get_actor_vbo(), rocks[i]->get_actor_texture(),  mat_roc * move_camera);
+	}
+
 	//hero
 	om::mat2x3 hero_scale = om::mat2x3::scale(0.2f);
 	om::mat2x3 hero_move = om::mat2x3::move(hero_contr->get_position());
 	om::mat2x3 hero_matrix = hero_scale * hero_move;
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
-
-	delete p;
 
 }
 

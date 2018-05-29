@@ -126,11 +126,19 @@ pawn::~pawn(){}
 class barrier : public pawn
 {
 public:
-	collision_box col_box;
-	barrier(om::texture* tex);
+	collision_box* col_box;
+	om::mat2x3 matrix;
+	barrier(om::texture* tex_, om::vec2 position, om::vec2 size);
+	om::mat2x3 get_matrix() const { return matrix; }
 };
 
-barrier::barrier(om::texture* tex_) :
-		pawn(tex_)
+barrier::barrier(om::texture* tex_, om::vec2 position, om::vec2 size) :
+		pawn(tex_, position)
 {
+	om::mat2x3 scale = om::mat2x3::scale(size.x);
+	om::mat2x3 move = om::mat2x3::move(position);
+
+	matrix =  scale * move;
+
+	col_box = new collision_box(matrix);
 }
