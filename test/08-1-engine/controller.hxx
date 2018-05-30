@@ -12,6 +12,7 @@ struct hero_state
 	uint16_t run_frame = 6;
 	uint16_t jump_frame = 10;
 	uint16_t trundle_frame = 17;
+	uint16_t falling_frame = 29;
 };
 
 enum hero_state_render
@@ -110,7 +111,12 @@ public:
 	hero_controller() = default;
 	hero_controller(character* hero, om::vec2 pos, collision_box col);
 	character* get_my_hero() const;
+
+	//movement of hero
 	void hero_run(float sec);
+	void hero_stay(float sec);
+	void hero_falling(float sec);
+
 	bool test_collision(collision_box* box);
 	~hero_controller();
 };
@@ -129,6 +135,23 @@ character* hero_controller::get_my_hero() const
 void hero_controller::hero_run(float sec)
 {
 	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 3, 9, 0.1, sec);
+}
+
+void hero_controller::hero_falling(float sec)
+{
+	if(hero_st.falling_frame == 34)
+	{
+		hero_st.falling_frame = my_hero->animate(34, 0, 34, 0.1, sec);
+	}
+	else
+	{
+		hero_st.falling_frame = my_hero->animate(hero_st.falling_frame, 5, 34, 0.1, sec);
+	}
+}
+
+void hero_controller::hero_stay(float sec)
+{
+	hero_st.stay_frame = my_hero->animate(hero_st.stay_frame, 5, 5, 0.3, sec);
 }
 
 bool hero_controller::test_collision(collision_box* box)
