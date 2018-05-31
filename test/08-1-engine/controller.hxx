@@ -15,14 +15,6 @@ struct hero_state
 	uint16_t falling_frame = 29;
 };
 
-enum hero_state_render
-{
-	stay,
-	run,
-	jump,
-	trundle
-};
-
 enum direction
 {
 	right,
@@ -104,18 +96,25 @@ class hero_controller : public controller
 private:
 	character* my_hero = nullptr;
 	hero_state hero_st;
-	hero_state_render hero_st_ren = stay;
 	direction hero_direc = right;
+	camera* cam = nullptr;
+	om::vec2 current_offset{0.0f, 0.0f};
+	om::vec2 position_stay;
 
 public:
 	hero_controller() = default;
 	hero_controller(character* hero, om::vec2 pos, collision_box col);
 	character* get_my_hero() const;
 
+	om::vec2 get_current_offset() const { return current_offset; }
+
+	camera* get_camera() const;
+
 	//movement of hero
 	void hero_run(float sec);
 	void hero_stay(float sec);
 	void hero_falling(float sec);
+	void hero_jump(float sec);
 
 	bool test_collision(collision_box* box);
 	~hero_controller();
@@ -124,6 +123,8 @@ public:
 hero_controller::hero_controller(character* hero, om::vec2 pos, collision_box col) :
 		controller(pos, col)
 {
+	position_stay = pos;
+	cam = new camera();
 	my_hero = hero;
 }
 
@@ -132,9 +133,38 @@ character* hero_controller::get_my_hero() const
 	return my_hero;
 }
 
+camera* hero_controller::get_camera() const
+{
+	return cam;
+}
+
 void hero_controller::hero_run(float sec)
 {
+	cam->update_camera(-0.004f, 0.0f);
 	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 3, 9, 0.1, sec);
+}
+
+void hero_controller::hero_jump(float sec)
+{
+	hero_st.stay_frame = 0;
+	hero_st.run_frame = 6;
+	hero_st.trundle_frame = 17;
+	hero_st.falling_frame = 29;
+
+	hero_st.jump_frame = my_hero->animate(hero_st.jump_frame, 8, 17, 0.1, sec);
+	current_offset.y = 0.0f;
+
+	cam->update_camera(-0.01f, current_offset.y);
+	if(hero_st.jump_frame >= 11 && hero_st.jump_frame <= 13)
+	{
+		current_offset.y = -0.03f;
+		cam->update_camera(0.0f, current_offset.y);
+	}
+	else if(hero_st.jump_frame >= 14 && hero_st.jump_frame <= 16)
+	{
+		current_offset.y = 0.03f;
+		cam->update_camera(0.0f, current_offset.y);
+	}
 }
 
 void hero_controller::hero_falling(float sec)
@@ -151,7 +181,12 @@ void hero_controller::hero_falling(float sec)
 
 void hero_controller::hero_stay(float sec)
 {
+	hero_st.jump_frame = 10;
+	hero_st.run_frame = 6;
+	hero_st.trundle_frame = 17;
+	hero_st.falling_frame = 29;
 	hero_st.stay_frame = my_hero->animate(hero_st.stay_frame, 5, 5, 0.3, sec);
+	//cam->set_pos(om::vec2(0.0f, position_stay.y));
 }
 
 bool hero_controller::test_collision(collision_box* box)

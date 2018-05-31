@@ -11,6 +11,7 @@ private:
 public:
 	camera();
 	om::vec2 get_pos() const;
+	void set_pos(om::vec2 p);
 	void update_camera(float x, float y);
 	om::mat2x3 get_camera_matrix() const;
 };
@@ -25,6 +26,11 @@ camera::camera()
 om::vec2 camera::get_pos() const
 {
 	return v0;
+}
+
+void camera::set_pos(om::vec2 p)
+{
+	move = om::mat2x3::move(p);
 }
 
 void camera::update_camera(float x, float y)

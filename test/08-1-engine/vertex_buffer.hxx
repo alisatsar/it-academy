@@ -46,7 +46,7 @@ public:
         triangles[1] = t2;
     }
 
-    void change_x_coord(float x)
+    void move_x_coord(float x)
     {
     	triangles[0].v[0].pos.x += x;
     	triangles[1].v[1].pos.x += x;
@@ -57,7 +57,7 @@ public:
     	triangles[1].v[0].pos.x += x;
     }
 
-    void change_y_coord(float y)
+    void move_y_coord(float y)
     {
     	triangles[0].v[0].pos.y += y;
         triangles[1].v[1].pos.y += y;
@@ -66,6 +66,30 @@ public:
         triangles[0].v[1].pos.y += y;
         triangles[0].v[2].pos.y += y;
         triangles[1].v[0].pos.y += y;
+    }
+
+    void set_x_coord(float x)
+    {
+    	float delta = triangles[1].v[1].pos.x - triangles[0].v[1].pos.x;
+    	triangles[0].v[0].pos.x = x;
+    	triangles[1].v[1].pos.x = x;
+    	triangles[1].v[2].pos.x = x;
+
+    	triangles[0].v[1].pos.x = x + delta;
+    	triangles[0].v[2].pos.x = x + delta;
+    	triangles[1].v[0].pos.x = x + delta;
+    }
+
+    void set_y_coord(float y)
+    {
+    	float delta = triangles[1].v[1].pos.y - triangles[0].v[1].pos.y;
+    	triangles[0].v[0].pos.y = y;
+    	triangles[1].v[1].pos.y = y;
+    	triangles[1].v[2].pos.y = y;
+
+    	triangles[0].v[1].pos.y = y + delta;
+    	triangles[0].v[2].pos.y = y + delta;
+    	triangles[1].v[0].pos.y = y + delta;
     }
 
     void change_vbo_tex(float left, float right, float top, float bottom)

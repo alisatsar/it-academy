@@ -40,7 +40,7 @@ private:
 	std::vector<barrier*> rocks;
 
 	hero_controller* hero_contr = nullptr;
-	camera* cam = nullptr;
+
 	om::texture* t = nullptr;
 
 	world* game_world = nullptr;
@@ -74,7 +74,7 @@ void girl_game::on_initialize()
         return;
     }
 
-    cam = new camera();
+
 
     //create our hero
     character* hero = new character(tex, 7, 7, 90);
@@ -205,16 +205,23 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	else if (engine.is_key_down(om::keys::right))
 	{
 		hero_contr->hero_run(engine.get_time_from_init());
-		cam->update_camera(-0.004f, 0.0f);
+
 		for(size_t i = 0; i < rocks.size(); ++i)
 		{
 			rocks[i]->col_box->move_x(-0.004f);
+
 		}
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::up))
 	{
-		//hero_st.jump_frame = he->animate(hero_st.jump_frame, 16, 6, 0.1, engine.get_time_from_init());
+		hero_contr->hero_jump(engine.get_time_from_init());
+
+		for(size_t i = 0; i < rocks.size(); ++i)
+		{
+			rocks[i]->col_box->move_x(-0.01f);
+			rocks[i]->col_box->move_y(hero_contr->get_current_offset().y);
+		}
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::down))
@@ -233,7 +240,7 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 void girl_game::on_render()
 {
 	om::mat2x3 scale_backg = om::mat2x3::scale(1.0f);
-	om::mat2x3 move_camera = cam->get_camera_matrix();
+	om::mat2x3 move_camera = hero_contr->get_camera()->get_camera_matrix();
 	om::mat2x3 b = scale_backg * move_camera;
 	//matrixes for background
 	for(size_t i = 0; i < backgrounds_x.size(); ++i)
@@ -256,25 +263,25 @@ void girl_game::on_render()
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
 
-//	//for testing render col box
-//	om::tri0 t;
-//	t.v[0].pos = hero_contr->get_collision_box().v0;
-//	t.v[1].pos.x = hero_contr->get_collision_box().v1.x;
-//	t.v[1].pos.y = hero_contr->get_collision_box().v0.y;
-//	t.v[2].pos = hero_contr->get_collision_box().v1;
-//	om::color c{1.0, 0.0, 0.0, 1.0};
-//	engine.render(t, c);
-//
-//	om::tri0 t2;
-//	for(size_t i = 0; i < rocks.size(); ++i)
-//	{
-//	t2.v[0].pos = rocks[i]->get_colision_box()->v0;
-//	t2.v[1].pos.x = rocks[i]->get_colision_box()->v1.x;
-//	t2.v[1].pos.y = rocks[i]->get_colision_box()->v0.y;
-//	t2.v[2].pos = rocks[i]->get_colision_box()->v1;
-//	engine.render(t2, c);
-//	}
-//
+	//for testing render col box
+	om::tri0 t;
+	t.v[0].pos = hero_contr->get_collision_box().v0;
+	t.v[1].pos.x = hero_contr->get_collision_box().v1.x;
+	t.v[1].pos.y = hero_contr->get_collision_box().v0.y;
+	t.v[2].pos = hero_contr->get_collision_box().v1;
+	om::color c{1.0, 0.0, 0.0, 1.0};
+	engine.render(t, c);
+
+	om::tri0 t2;
+	for(size_t i = 0; i < rocks.size(); ++i)
+	{
+	t2.v[0].pos = rocks[i]->get_colision_box()->v0;
+	t2.v[1].pos.x = rocks[i]->get_colision_box()->v1.x;
+	t2.v[1].pos.y = rocks[i]->get_colision_box()->v0.y;
+	t2.v[2].pos = rocks[i]->get_colision_box()->v1;
+	engine.render(t2, c);
+	}
+
 //	om::tri0 t3;
 //
 //	for(size_t i = 0; i < rocks.size(); ++i)

@@ -20,6 +20,8 @@ public:
 	//change_vbo
 	void change_vbo_coord_x(float x);
 	void change_vbo_coord_y(float y);
+	void move_vbo_coord_x(float x);
+	void move_vbo_coord_y(float y);
 	void changet_texture_coord(float left, float right, float top, float bottom);
 	void get_x0_y0() const;
 };
@@ -46,12 +48,22 @@ om::texture* actor::get_actor_texture() const
 
 void actor::change_vbo_coord_x(float x)
 {
-	actor_vbo->change_x_coord(x);
+	actor_vbo->set_x_coord(x);
 }
 
 void actor::change_vbo_coord_y(float y)
 {
-	actor_vbo->change_y_coord(y);
+	actor_vbo->set_y_coord(y);
+}
+
+void actor::move_vbo_coord_x(float x)
+{
+	actor_vbo->move_x_coord(x);
+}
+
+void actor::move_vbo_coord_y(float y)
+{
+	actor_vbo->move_y_coord(y);
 }
 
 void actor::changet_texture_coord(float left, float right, float top, float bottom)
