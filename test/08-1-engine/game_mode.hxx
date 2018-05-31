@@ -208,7 +208,7 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 		for(size_t i = 0; i < rocks.size(); ++i)
 		{
-			rocks[i]->col_box->move_x(-0.004f);
+			rocks[i]->col_box->move_x(-0.008f);
 		}
 		on_render();
 	}
@@ -218,14 +218,19 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 
 		for(size_t i = 0; i < rocks.size(); ++i)
 		{
-			rocks[i]->col_box->move_x(-0.01f);
+			rocks[i]->col_box->move_x(hero_contr->get_current_offset().x);
 			rocks[i]->col_box->move_y(hero_contr->get_current_offset().y);
 		}
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::down))
 	{
-		hero_contr->hero_stay(engine.get_time_from_init());
+		hero_contr->hero_trundle(engine.get_time_from_init());
+		for(size_t i = 0; i < rocks.size(); ++i)
+		{
+			rocks[i]->col_box->move_x(hero_contr->get_current_offset().x);
+			rocks[i]->col_box->move_y(hero_contr->get_current_offset().y);
+		}
 		on_render();
 	}
 	else
@@ -285,15 +290,15 @@ void girl_game::on_render()
 	engine.render(t2, c);
 	}
 
-//	om::tri0 t3;
-//
-//	for(size_t i = 0; i < rocks.size(); ++i)
-//	{
-//		t3.v[0].pos = rocks[i]->get_actor_vbo()->get_left_bottom();
-//		t3.v[1].pos.x = rocks[i]->get_actor_vbo()->get_left_bottom().x;
-//		t3.v[1].pos.y = rocks[i]->get_actor_vbo()->get_right_top().y;
-//		t3.v[2].pos = rocks[i]->get_actor_vbo()->get_right_top();
-//		engine.render(t3, c);
-//	}
+	om::tri0 t3;
+
+	for(size_t i = 0; i < rocks.size(); ++i)
+	{
+		t3.v[0].pos = rocks[i]->get_actor_vbo()->get_left_bottom();
+		t3.v[1].pos.x = rocks[i]->get_actor_vbo()->get_left_bottom().x;
+		t3.v[1].pos.y = rocks[i]->get_actor_vbo()->get_right_top().y;
+		t3.v[2].pos = rocks[i]->get_actor_vbo()->get_right_top();
+		engine.render(t3, c);
+	}
 }
 
