@@ -11,7 +11,8 @@ private:
 public:
 	camera();
 	om::vec2 get_pos() const;
-	void set_pos(om::vec2 p);
+	void set_pos_x(float x);
+	void set_pos_y(float y);
 	void update_camera(float x, float y);
 	om::mat2x3 get_camera_matrix() const;
 };
@@ -28,9 +29,18 @@ om::vec2 camera::get_pos() const
 	return v0;
 }
 
-void camera::set_pos(om::vec2 p)
+void camera::set_pos_x(float x)
 {
-	move = om::mat2x3::move(p);
+	v0.x = x;
+	move = om::mat2x3::identiry();
+	move = om::mat2x3::move(v0);
+}
+
+void camera::set_pos_y(float y)
+{
+	v0.y = y;
+	move = om::mat2x3::identiry();
+	move = om::mat2x3::move(v0);
 }
 
 void camera::update_camera(float x, float y)

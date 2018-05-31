@@ -110,6 +110,8 @@ public:
 
 	camera* get_camera() const;
 
+	om::vec2 get_position_stay() const { return position_stay; }
+
 	//movement of hero
 	void hero_run(float sec);
 	void hero_stay(float sec);
@@ -186,7 +188,7 @@ void hero_controller::hero_stay(float sec)
 	hero_st.trundle_frame = 17;
 	hero_st.falling_frame = 29;
 	hero_st.stay_frame = my_hero->animate(hero_st.stay_frame, 5, 5, 0.3, sec);
-	//cam->set_pos(om::vec2(0.0f, position_stay.y));
+	cam->set_pos_y(0.0f);
 }
 
 bool hero_controller::test_collision(collision_box* box)

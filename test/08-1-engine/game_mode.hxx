@@ -209,7 +209,6 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 		for(size_t i = 0; i < rocks.size(); ++i)
 		{
 			rocks[i]->col_box->move_x(-0.004f);
-
 		}
 		on_render();
 	}
@@ -232,6 +231,10 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	else
 	{
 		hero_contr->hero_stay(engine.get_time_from_init());
+		for(size_t i = 0; i < rocks.size(); ++i)
+		{
+			rocks[i]->col_box->set_y(rocks[i]->col_box->get_position_state().y);
+		}
 		on_render();
 	}
 
@@ -258,7 +261,7 @@ void girl_game::on_render()
 
 	//hero
 	om::mat2x3 hero_scale = om::mat2x3::scale(0.2f);
-	om::mat2x3 hero_move = om::mat2x3::move(hero_contr->get_position());
+	om::mat2x3 hero_move = om::mat2x3::move(hero_contr->get_position_stay());
 	om::mat2x3 hero_matrix = hero_scale * hero_move;
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
