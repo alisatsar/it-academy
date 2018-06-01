@@ -1,25 +1,46 @@
 #pragma once
 
-#include "character.hxx"
-#include "pawn.hxx"
 #include "collision_box.hxx"
 #include "e_math.hxx"
-#include "camera.hxx"
 
-struct hero_state
-{
-	uint16_t stay_frame = 0;
-	uint16_t run_frame = 6;
-	uint16_t jump_frame = 10;
-	uint16_t trundle_frame = 17;
-	uint16_t falling_frame = 29;
-};
+///screen dimension compile-runtime
+constexpr size_t window_width{640};
+constexpr size_t window_height{480};
+constexpr float tex_px_x = 1.0f / window_width;
+constexpr float tex_px_y = 1.0f / window_height;
+constexpr float pos_x0 = window_width / 2.0f;
+constexpr float pos_y0 = window_height / 2.0f;
+constexpr float pos_px_x = 1.0f / (window_width / 2.0f);
+constexpr float pos_px_y = 1.0f / (window_height / 2.0f);
 
-enum direction
+om::vec2 get_tex_coor(float px_x, float px_y)
 {
-	right,
-	left
-};
+	om::vec2 result;
+	result.x = tex_px_x * px_x;
+	result.y = tex_px_y * px_y;
+	return result;
+}
+
+om::vec2 get_pos_coor(float px_x, float px_y)
+{
+	om::vec2 result;
+
+	result.x = (px_x - pos_x0) * pos_px_x;
+
+	if(px_x == pos_x0)
+	{
+		result.x = 0.0f;
+	}
+
+	result.y = (px_y - pos_y0) * pos_px_y;
+
+	if(px_y == pos_y0)
+	{
+		result.y = 0.0f;
+	}
+
+	return result;
+}
 
 class controller
 {
@@ -90,168 +111,3 @@ void controller::move_col_box_y(float y)
 {
 	col_box.move_y(y);
 }
-
-class hero_controller : public controller
-{
-private:
-	character* my_hero = nullptr;
-	hero_state hero_st;
-	direction hero_direc = right;
-	camera* cam = nullptr;
-	om::vec2 current_offset{0.0f, 0.0f};
-	om::vec2 position_stay;
-	bool big_col_box_flag;
-
-public:
-	hero_controller() = default;
-	hero_controller(character* hero, om::vec2 pos, collision_box col);
-	character* get_my_hero() const;
-
-	om::vec2 get_current_offset() const { return current_offset; }
-
-	camera* get_camera() const;
-
-	om::vec2 get_position_stay() const { return position_stay; }
-	void change_col_box();
-
-	//movement of hero
-	void hero_run(float sec);
-	void hero_stay(float sec);
-	void hero_falling(float sec);
-	void hero_jump(float sec);
-	void hero_trundle(float sec);
-
-	bool test_collision(collision_box* box);
-	~hero_controller();
-};
-
-hero_controller::hero_controller(character* hero, om::vec2 pos, collision_box col) :
-		controller(pos, col)
-{
-	position_stay = pos;
-	cam = new camera();
-	my_hero = hero;
-	big_col_box_flag = true;
-}
-
-character* hero_controller::get_my_hero() const
-{
-	return my_hero;
-}
-
-camera* hero_controller::get_camera() const
-{
-	return cam;
-}
-
-void hero_controller::hero_run(float sec)
-{
-	big_col_box_flag = true;
-	change_col_box();
-	hero_st.stay_frame = 0;
-	hero_st.jump_frame = 10;
-	hero_st.trundle_frame = 17;
-	hero_st.falling_frame = 29;
-	cam->update_camera(-0.008f, 0.0f);
-	hero_st.run_frame = my_hero->animate(hero_st.run_frame, 3, 9, 0.1, sec);
-	cam->set_pos_y(0.0f);
-}
-
-void hero_controller::hero_jump(float sec)
-{
-	big_col_box_flag = true;
-	change_col_box();
-	hero_st.stay_frame = 0;
-	hero_st.run_frame = 6;
-	hero_st.trundle_frame = 17;
-	hero_st.falling_frame = 29;
-
-	hero_st.jump_frame = my_hero->animate(hero_st.jump_frame, 8, 16, 0.1, sec);
-	current_offset.x = -0.015f;
-	current_offset.y = 0.0f;
-
-	cam->update_camera(current_offset.x, current_offset.y);
-	if(hero_st.jump_frame >= 11 && hero_st.jump_frame <= 13)
-	{
-		current_offset.y = -0.03f;
-		cam->update_camera(0.0f, current_offset.y);
-	}
-	else if(hero_st.jump_frame >= 14 && hero_st.jump_frame <= 16)
-	{
-		current_offset.y = 0.03f;
-		cam->update_camera(0.0f, current_offset.y);
-	}
-}
-
-void hero_controller::hero_falling(float sec)
-{
-	if(hero_st.falling_frame == 34)
-	{
-		hero_st.falling_frame = my_hero->animate(34, 0, 34, 0.1, sec);
-		cam->set_pos_y(0.0f);
-	}
-	else
-	{
-		hero_st.falling_frame = my_hero->animate(hero_st.falling_frame, 5, 34, 0.1, sec);
-	}
-
-}
-
-void hero_controller::hero_stay(float sec)
-{
-	big_col_box_flag = true;
-	change_col_box();
-	hero_st.jump_frame = 10;
-	hero_st.run_frame = 6;
-	hero_st.trundle_frame = 17;
-	hero_st.falling_frame = 29;
-	hero_st.stay_frame = my_hero->animate(hero_st.stay_frame, 5, 5, 0.3, sec);
-	cam->set_pos_y(0.0f);
-}
-
-void hero_controller::hero_trundle(float sec)
-{
-	hero_st.jump_frame = 10;
-	hero_st.run_frame = 6;
-	hero_st.stay_frame = 0;
-	hero_st.falling_frame = 29;
-
-	hero_st.trundle_frame = my_hero->animate(hero_st.trundle_frame, 5, 21, 0.2, sec);
-	current_offset.x = -0.015f;
-	current_offset.y = 0.0f;
-
-	cam->update_camera(current_offset.x, current_offset.y);
-	big_col_box_flag = false;
-	change_col_box();
-}
-
-bool hero_controller::test_collision(collision_box* box)
-{
-	collision_box c = this->get_collision_box();
-	return (c.v1.x >= box->v0.x && c.v0.x <= box->v1.x) &&
-			(c.v1.y >= box->v0.y && c.v0.y <= box->v1.y);
-}
-
-void hero_controller::change_col_box()
-{
-	static collision_box tmp = get_collision_box();
-	om::vec2 pos2 = tmp.v1;
-	pos2.x = tmp.v1.x;
-	if(big_col_box_flag)
-	{
-		pos2.y = tmp.v1.y;
-	}
-	else
-	{
-		pos2.y = tmp.v1.y - 0.1;
-	}
-
-	set_collision_box(tmp.v0, pos2);
-}
-
-hero_controller::~hero_controller()
-{
-	delete my_hero;
-}
-
-

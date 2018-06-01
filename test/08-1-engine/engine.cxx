@@ -20,7 +20,7 @@
 #include "picopng.hxx"
 #include "sdl2_opengl.hxx"
 
-std::istream& operator>>(std::istream& is, backgrounds& b)
+std::istream& operator>>(std::istream& is, background& b)
 {
 	is >> b.name;
 	is >> b.position.x;
@@ -82,9 +82,6 @@ float pos_x0;
 float pos_y0;
 float pos_px_x;
 float pos_px_y;
-
-///the ratio of the window to world pixel into gl_coordinates
-om::vec2 ratio_win_to_world;
 
 class sound_buffer_impl final : public om::sound
 {
@@ -728,7 +725,7 @@ void om::engine::exit(int return_code)
 
 static void audio_callback(void*, uint8_t*, int);
 
-om::engine::engine(std::string_view, om::window_size window_size, om::window_size level_size)
+om::engine::engine(std::string_view, om::window_size window_size)
     : log(std::cout)
 {
 	om::win_size = window_size;
@@ -736,17 +733,6 @@ om::engine::engine(std::string_view, om::window_size window_size, om::window_siz
     {
         throw std::runtime_error("engine already exist");
     }
-
-    tex_px_x = 1.0f / win_size.window_width;
-    tex_px_y = 1.0f / win_size.window_height;
-
-    pos_x0 = win_size.window_width / 2.0f;
-    pos_y0 = win_size.window_height / 2.0f;
-    pos_px_x = 1.0f / (win_size.window_width / 2.0f);
-    pos_px_y = 1.0f / (win_size.window_height / 2.0f);
-
-    ratio_win_to_world.x = window_size.window_width / level_size.window_width;
-    ratio_win_to_world.y = window_size.window_height / level_size.window_height;
 
     {
         using namespace std;
@@ -1153,49 +1139,4 @@ void audio_callback(void*, uint8_t* stream, int stream_size)
             }
         }
     }
-}
-
-om::vec2 om::engine::get_tex_coor(float px_x, float px_y)
-{
-	om::vec2 result;
-	result.x = tex_px_x * px_x;
-	result.y = tex_px_y * px_y;
-	return result;
-}
-
-om::vec2 om::engine::get_pos_coor(float px_x, float px_y)
-{
-	om::vec2 result;
-
-	result.x = (px_x - pos_x0) * pos_px_x;
-
-	if(px_x == pos_x0)
-	{
-		result.x = 0.0f;
-	}
-
-	result.y = (px_y - pos_y0) * pos_px_y;
-
-	if(px_y == pos_y0)
-	{
-		result.y = 0.0f;
-	}
-
-	return result;
-}
-
-om::vec2 om::engine::get_tex_coor_world(float px_x, float px_y)
-{
-	om::vec2 result = get_tex_coor(px_x, px_y);
-	result.x = result.x * ratio_win_to_world.x;
-	result.y = result.y *ratio_win_to_world.y;
-	return result;
-}
-
-om::vec2 om::engine::get_pos_coor_world(float px_x, float px_y)
-{
-	om::vec2 result = get_pos_coor(px_x, px_y);
-	result.x = result.x * ratio_win_to_world.x;
-	result.y = result.y * ratio_win_to_world.y;
-	return result;
 }

@@ -3,18 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include "controller.hxx"
+#include "hero_controller.hxx"
+#include "bat_controller.hxx"
+#include "pawn.hxx"
 #include "engine.hxx"
 #include "character.hxx"
-#include "world.hxx"
-
-///screen dimension compile-runtime
-constexpr size_t window_width{640};
-constexpr size_t window_height{480};
-
-///dimension of the level
-constexpr size_t level_width{1280};
-constexpr size_t level_height{480};
 
 struct lila
 {
@@ -23,6 +16,7 @@ struct lila
     virtual void on_event(om::event&)                             = 0;
     virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
     virtual void on_render()   = 0;
+    virtual void on_clear() = 0;
 };
 
 extern std::unique_ptr<lila> om_tat_sat(om::engine&);
@@ -35,26 +29,25 @@ private:
 	om::engine& engine;
 	om::sound*   snd        = nullptr;
 
-	std::vector<pawn*> backgrounds_x;
+	//all backgrounds in game
+	std::vector<pawn*> backgrounds;
 
+	//barriers
 	std::vector<barrier*> rocks;
 
 	hero_controller* hero_contr = nullptr;
+	bat_controller* bat_contr = nullptr;
 
 	om::texture* t = nullptr;
-
-	world* game_world = nullptr;
 public:
 
-    explicit girl_game(om::engine& engine)
-        : engine(engine)
-    {
-    }
+    explicit girl_game(om::engine& engine) : engine(engine){}
 
     void on_initialize() final;
     void on_event(om::event&) final;
     void on_update(std::chrono::milliseconds frame_delta) final;
     void on_render() final;
+    void on_clear() final;
 };
 
 std::unique_ptr<lila> om_tat_sat(om::engine& e)
@@ -74,33 +67,18 @@ void girl_game::on_initialize()
         return;
     }
 
+    hero_contr = new hero_controller(tex);
 
+    tex = engine.create_texture("bat-90x90.png");
+    if (nullptr == tex)
+    {
+        engine.log << "failed load texture\n";
+        return;
+    }
 
-    //create our hero
-    character* hero = new character(tex, 7, 7, 90);
+    bat_contr = new bat_controller(tex);
 
-    //create position in world
-    float x_px = 100;
-    float y_px = 100;
-    om::vec2 pos = engine.get_pos_coor(x_px, y_px);
-
-    ///now create collision box 64x64 px for our hero
-    om::vec2 x0;
-
-    x0.x = x_px - 32;
-    x0.y = y_px - hero->get_size_sprite_px() / 2;
-
-    om::vec2 x1;
-
-    x1.x = x_px + 32;
-    x1.y = x0.y + 64;
-
-    om::vec2 pos0 = engine.get_pos_coor(x0.x, x0.y);
-    om::vec2 pos1 = engine.get_pos_coor(x1.x, x1.y);
-
-    hero_contr = new hero_controller(hero, pos, collision_box(pos0, pos1));
-
-   	std::vector<backgrounds> all_backgrounds;
+   	std::vector<background> all_backgrounds;
    	std::uint32_t count_of_backgrounds;
 
    	std::ifstream file("background.txt");
@@ -108,7 +86,7 @@ void girl_game::on_initialize()
 
    	file >> count_of_backgrounds;
 
-   	backgrounds b;
+   	background b;
     for (std::uint32_t i = 0; i < count_of_backgrounds; ++i)
    	{
    		file >> b;
@@ -123,7 +101,7 @@ void girl_game::on_initialize()
     	    engine.log << "failed load texture\n";
     	    return;
     	}
-    	backgrounds_x.push_back(new pawn(tex, i.position, om::vec2(2.0f, 2.0f)));
+    	backgrounds.push_back(new pawn(tex, i.position, om::vec2(2.0f, 2.0f)));
     }
 
    	std::uint32_t count_of_barriers;
@@ -145,14 +123,14 @@ void girl_game::on_initialize()
 	}
 
    	barrier* rock;
+   	om::vec2 pos;
    	om::vec2 size;
    	for(std::uint32_t i = 0; i < count_of_barriers; ++i)
    	{
    		file2 >> pos.x >> pos.y >> size.x >> size.y;
-   		rock = new barrier(tex, engine.get_pos_coor(pos.x, pos.y), size);
+   		rock = new barrier(tex, get_pos_coor(pos.x, pos.y), size);
    		rocks.push_back(rock);
    	}
-
 
     snd = engine.create_sound("t2_no_problemo.wav");
 }
@@ -189,6 +167,8 @@ void girl_game::on_event(om::event& event)
 
 void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 {
+	float time = engine.get_time_from_init();
+	//bat_contr->bat_stay(time);
 	for(size_t i = 0; i < rocks.size(); ++i)
 	{
 		if(hero_contr->test_collision(rocks[i]->col_box))
@@ -235,14 +215,13 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	}
 	else
 	{
-		hero_contr->hero_stay(engine.get_time_from_init());
+		hero_contr->hero_stay(time);
 		for(size_t i = 0; i < rocks.size(); ++i)
 		{
 			rocks[i]->col_box->set_y(rocks[i]->col_box->get_position_state().y);
 		}
 		on_render();
 	}
-
 }
 
 void girl_game::on_render()
@@ -251,9 +230,9 @@ void girl_game::on_render()
 	om::mat2x3 move_camera = hero_contr->get_camera()->get_camera_matrix();
 	om::mat2x3 b = scale_backg * move_camera;
 	//matrixes for background
-	for(size_t i = 0; i < backgrounds_x.size(); ++i)
+	for(size_t i = 0; i < backgrounds.size(); ++i)
 	{
-		engine.render(*backgrounds_x[i]->get_actor_vbo(), backgrounds_x[i]->get_actor_texture(), b);
+		engine.render(*backgrounds[i]->get_actor_vbo(), backgrounds[i]->get_actor_texture(), b);
 	}
 	//matrixes for background
 
@@ -270,6 +249,10 @@ void girl_game::on_render()
 	om::mat2x3 hero_matrix = hero_scale * hero_move;
 	engine.render(*hero_contr->get_my_hero()->get_character_vbo(),
 			hero_contr->get_my_hero()->get_character_texture(), hero_matrix);
+
+	om::mat2x3 bat_move = om::mat2x3::move(bat_contr->get_position());
+	engine.render(*bat_contr->get_bat()->get_character_vbo(),
+			bat_contr->get_bat()->get_character_texture(), hero_scale * bat_move * move_camera);
 
 	//for testing render col box
 	om::tri0 t;
@@ -300,5 +283,23 @@ void girl_game::on_render()
 		t3.v[2].pos = rocks[i]->get_actor_vbo()->get_right_top();
 		engine.render(t3, c);
 	}
+
+	//for testing render col box
+	om::tri0 t4;
+	t4.v[0].pos = bat_contr->get_collision_box().v0;
+	t4.v[1].pos.x = bat_contr->get_collision_box().v1.x;
+	t4.v[1].pos.y = bat_contr->get_collision_box().v0.y;
+	t4.v[2].pos = bat_contr->get_collision_box().v1;
+	engine.render(t4, c);
+
+}
+
+void girl_game::on_clear()
+{
+	for ( auto background : backgrounds ) { delete background; }
+	for ( auto rock : rocks ) { delete rock; }
+	delete hero_contr;
+	delete t;
+	delete snd;
 }
 

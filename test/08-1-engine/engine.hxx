@@ -15,18 +15,17 @@
 
 void delay(int sec);
 
-
 #ifndef OM_DECLSPEC
 #define OM_DECLSPEC
 #endif
 
-struct backgrounds
+struct background
 {
 	std::string name;
 	om::vec2 position;
 };
 
-std::istream& operator>>(std::istream& is, backgrounds&);
+std::istream& operator>>(std::istream& is, background&);
 
 namespace om
 {
@@ -124,7 +123,7 @@ window_size win_size;
 class OM_DECLSPEC engine
 {
 public:
-    explicit engine(std::string_view, om::window_size window_size, om::window_size level_size);
+    explicit engine(std::string_view, om::window_size window_size);
     ~engine();
     engine& operator      =(engine&& other); // move assignment
     engine(const engine&) = delete;
@@ -152,11 +151,6 @@ public:
     void swap_buffers();
     void uninitialize();
 
-    om::vec2 get_tex_coor(float px_x, float px_y);
-    om::vec2 get_pos_coor(float px_x, float px_y);
-
-    om::vec2 get_tex_coor_world(float px_x, float px_y);
-    om::vec2 get_pos_coor_world(float px_x, float px_y);
     void exit(int return_code);
 
     std::ostream& log;
