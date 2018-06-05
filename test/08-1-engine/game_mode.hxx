@@ -5,6 +5,7 @@
 
 #include "hero_controller.hxx"
 #include "bat_controller.hxx"
+#include "barrier_controller.hxx"
 #include "pawn.hxx"
 #include "engine.hxx"
 #include "character.hxx"
@@ -32,13 +33,12 @@ private:
 	//all backgrounds in game
 	std::vector<pawn*> backgrounds;
 
-	//barriers
-	std::vector<barrier*> rocks;
-
 	hero_controller* hero_contr = nullptr;
 	bat_controller* bat_contr = nullptr;
+	barrier_controller* barrier_contr = nullptr;
 
 	om::texture* t = nullptr;
+	float time;
 public:
 
     explicit girl_game(om::engine& engine) : engine(engine){}
@@ -104,6 +104,7 @@ void girl_game::on_initialize()
     	backgrounds.push_back(new pawn(tex, i.position, om::vec2(2.0f, 2.0f)));
     }
 
+    barrier_contr = new barrier_controller();
    	std::uint32_t count_of_barriers;
 
    	std::ifstream file2("barrier.txt");
@@ -122,14 +123,12 @@ void girl_game::on_initialize()
    		return;
 	}
 
-   	barrier* rock;
    	om::vec2 pos;
    	om::vec2 size;
    	for(std::uint32_t i = 0; i < count_of_barriers; ++i)
    	{
    		file2 >> pos.x >> pos.y >> size.x >> size.y;
-   		rock = new barrier(tex, get_pos_coor(pos.x, pos.y), size);
-   		rocks.push_back(rock);
+   		barrier_contr->add_barrier(tex, pos, size);
    	}
 
     snd = engine.create_sound("t2_no_problemo.wav");
@@ -167,13 +166,12 @@ void girl_game::on_event(om::event& event)
 
 void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 {
-	float time = engine.get_time_from_init();
-	//bat_contr->bat_stay(time);
-	for(size_t i = 0; i < rocks.size(); ++i)
+	time = engine.get_time_from_init();
+	for(size_t i = 0; i < barrier_contr->get_size(); ++i)
 	{
-		if(hero_contr->test_collision(rocks[i]->col_box))
+		if(hero_contr->test_collision(barrier_contr->get_barrier(i)->col_box))
 		{
-			hero_contr->hero_falling(engine.get_time_from_init());
+			hero_contr->hero_falling(time);
 			on_render();
 			return;
 		}
@@ -182,44 +180,25 @@ void girl_game::on_update(std::chrono::milliseconds /*frame_delta*/)
 	{
 		on_render();
 	}
-	else if (engine.is_key_down(om::keys::right))
-	{
-		hero_contr->hero_run(engine.get_time_from_init());
-
-		for(size_t i = 0; i < rocks.size(); ++i)
-		{
-			rocks[i]->col_box->move_x(-0.008f);
-		}
-		on_render();
-	}
 	else if (engine.is_key_down(om::keys::up))
 	{
-		hero_contr->hero_jump(engine.get_time_from_init());
-
-		for(size_t i = 0; i < rocks.size(); ++i)
-		{
-			rocks[i]->col_box->move_x(hero_contr->get_current_offset().x);
-			rocks[i]->col_box->move_y(hero_contr->get_current_offset().y);
-		}
+		hero_contr->hero_jump(time);
+		barrier_contr->move_collision_box(hero_contr->get_current_offset().x,
+				hero_contr->get_current_offset().y);
 		on_render();
 	}
 	else if (engine.is_key_down(om::keys::down))
 	{
-		hero_contr->hero_trundle(engine.get_time_from_init());
-		for(size_t i = 0; i < rocks.size(); ++i)
-		{
-			rocks[i]->col_box->move_x(hero_contr->get_current_offset().x);
-			rocks[i]->col_box->move_y(hero_contr->get_current_offset().y);
-		}
+		hero_contr->hero_trundle(time);
+		barrier_contr->move_collision_box(hero_contr->get_current_offset().x,
+						hero_contr->get_current_offset().y);
 		on_render();
 	}
 	else
 	{
-		hero_contr->hero_stay(time);
-		for(size_t i = 0; i < rocks.size(); ++i)
-		{
-			rocks[i]->col_box->set_y(rocks[i]->col_box->get_position_state().y);
-		}
+		hero_contr->hero_run(time);
+		barrier_contr->move_collision_box(-0.008f,
+						hero_contr->get_current_offset().y);
 		on_render();
 	}
 }
@@ -237,10 +216,11 @@ void girl_game::on_render()
 	//matrixes for background
 
 	om::mat2x3 mat_roc;
-	for(size_t i = 0; i < rocks.size(); ++i)
+	for(size_t i = 0; i < barrier_contr->get_size(); ++i)
 	{
-		mat_roc = rocks[i]->get_matrix();
-		engine.render(*rocks[i]->get_actor_vbo(), rocks[i]->get_actor_texture(),  move_camera);
+		mat_roc = barrier_contr->get_barrier(i)->get_matrix();
+		engine.render(*barrier_contr->get_barrier(i)->get_actor_vbo(),
+				barrier_contr->get_barrier(i)->get_actor_texture(),  move_camera);
 	}
 
 	//hero
@@ -264,25 +244,25 @@ void girl_game::on_render()
 	engine.render(t, c);
 
 	om::tri0 t2;
-	for(size_t i = 0; i < rocks.size(); ++i)
+	for(size_t i = 0; i < barrier_contr->get_size(); ++i)
 	{
-	t2.v[0].pos = rocks[i]->get_colision_box()->v0;
-	t2.v[1].pos.x = rocks[i]->get_colision_box()->v1.x;
-	t2.v[1].pos.y = rocks[i]->get_colision_box()->v0.y;
-	t2.v[2].pos = rocks[i]->get_colision_box()->v1;
+	t2.v[0].pos = barrier_contr->get_barrier(i)->get_colision_box()->v0;
+	t2.v[1].pos.x = barrier_contr->get_barrier(i)->get_colision_box()->v1.x;
+	t2.v[1].pos.y = barrier_contr->get_barrier(i)->get_colision_box()->v0.y;
+	t2.v[2].pos = barrier_contr->get_barrier(i)->get_colision_box()->v1;
 	engine.render(t2, c);
 	}
 
-	om::tri0 t3;
-
-	for(size_t i = 0; i < rocks.size(); ++i)
-	{
-		t3.v[0].pos = rocks[i]->get_actor_vbo()->get_left_bottom();
-		t3.v[1].pos.x = rocks[i]->get_actor_vbo()->get_left_bottom().x;
-		t3.v[1].pos.y = rocks[i]->get_actor_vbo()->get_right_top().y;
-		t3.v[2].pos = rocks[i]->get_actor_vbo()->get_right_top();
-		engine.render(t3, c);
-	}
+//	om::tri0 t3;
+//
+//	for(size_t i = 0; i < rocks.size(); ++i)
+//	{
+//		t3.v[0].pos = rocks[i]->get_actor_vbo()->get_left_bottom();
+//		t3.v[1].pos.x = rocks[i]->get_actor_vbo()->get_left_bottom().x;
+//		t3.v[1].pos.y = rocks[i]->get_actor_vbo()->get_right_top().y;
+//		t3.v[2].pos = rocks[i]->get_actor_vbo()->get_right_top();
+//		engine.render(t3, c);
+//	}
 
 	//for testing render col box
 	om::tri0 t4;
@@ -297,7 +277,7 @@ void girl_game::on_render()
 void girl_game::on_clear()
 {
 	for ( auto background : backgrounds ) { delete background; }
-	for ( auto rock : rocks ) { delete rock; }
+	delete barrier_contr;
 	delete hero_contr;
 	delete t;
 	delete snd;

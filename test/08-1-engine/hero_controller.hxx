@@ -119,7 +119,7 @@ void hero_controller::hero_jump(float sec)
 	hero_st.falling_frame = 29;
 
 	hero_st.jump_frame = my_hero->animate(hero_st.jump_frame, 8, 16, 0.1, sec);
-	current_offset.x = -0.015f;
+	current_offset.x = -0.02f;
 	current_offset.y = 0.0f;
 
 	cam->update_camera(current_offset.x, current_offset.y);
