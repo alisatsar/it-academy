@@ -1,0 +1,12 @@
+11
+background.png	-1.0	-1.0
+background.png	1.0	-1.0
+background.png	3.0	-1.0
+background.png	5.0	-1.0
+background.png	7.0	-1.0
+background.png	9.0	-1.0
+background.png	11.0	-1.0
+background.png	13.0	-1.0
+background.png	15.0	-1.0
+background.png	17.0	-1.0
+background.png	19.0	-1.0
